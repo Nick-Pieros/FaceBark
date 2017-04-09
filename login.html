@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang='en'>
+   <head>
+      <meta charset='UTF-8'/>
+      <title>Facebark - Login</title>
+      <link href='css/login.css' rel='stylesheet'/>
+      <link href='images/doggo1.jpg' rel='icon'/>
+      <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js'></script>
+      <script type='text/javascript'>
+         /*
+           this code snippet was found online at:
+           http://stackoverflow.com/questions/1531093/how-do-i-get-the-current-date-in-javascript
+         */
+               function getDate() {
+                 var today = new Date();
+                 var dd = today.getDate();
+                 var mm = today.getMonth()+1; //January is 0!
+                 var yyyy = today.getFullYear();
+
+                 if(dd<10) {
+                     dd='0'+dd
+                 }
+
+                 if(mm<10) {
+                     mm='0'+mm
+                 }
+
+                 today = mm+'/'+dd+'/'+yyyy;
+                   $('.date').text(today)
+                }
+                window.onload = getDate;
+                function confirm() {
+                  var x = $('#email').val();
+                  if (x == '') {
+                      alert('Email must be filled out');
+                      return false;
+                  }
+                    alert('A confirmation email has been sent to: ' + x);
+                }
+      </script>
+   </head>
+   <body>
+      <div class='menu-container'>
+         <div class='menu'>
+            <div class='date'></div>
+            <div class='login'>
+               <form action='/action_page.php'>
+                  <input type='text' name='email' placeholder='Email'>
+                  <input type='password' name='password' placeholder='Password'>
+                  <input type='submit' value='Log In'>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class='header'>
+         <div class='header'>
+            <div class='logo'><img src='images/fbark-logo.png'/></div>
+         </div>
+      </div>
+      <div class='photo-signup'>
+         <div class='photo-grid'>
+               <div class='photo-grid-item first-item'>
+                  <img src='images/doggo1.jpg'/>
+               </div>
+               <div class='photo-grid-item'>
+                  <img src='images/doggo2.jpg'/>
+               </div>
+               <div class='photo-grid-item'>
+                  <img src='images/doggo3.jpg'/>
+               </div>
+               <div class='photo-grid-item'>
+                  <img src='images/doggo4.jpg'/>
+               </div>
+               <div class='photo-grid-item last-item'>
+                  <img src='images/doggo5.jpg'/>
+            </div>
+         </div>
+         <div class='signup-forgotpass'>
+            <div class='signup'>
+               <h1>Sign up for free!</h1>
+               <form name='myForm' onsubmit='return confirm()'>
+                  <input type='text' name='fname' placeholder='First Name'><br>
+                  <input type='text' name='lname' placeholder='Last Name'><br>
+                  <input id='email' type='text' name='email' placeholder='Email'><br>
+                  <input type='password' name='password' placeholder='Password'><br>
+                  <input type='password' name='confirm-password' placeholder='Confirm Password'><br>
+                  <input type='submit' value='Sign Up!'>
+               </form>
+            </div>
+            <div class='forgotpass'>
+               <h1>Forgot password?</h1>
+               <form action='/action_page.php'>
+                  <input type='text' name='email' placeholder='Email'><br>
+                  <input type='submit' value='Reset Password!'>
+               </form>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>
