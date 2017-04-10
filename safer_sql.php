@@ -64,7 +64,7 @@ As a result, setting the person_id to "4 or 1=1" won't work.
 
 <p> Here is your grade from when you were here before (if ever): </p>
 <?php
-require_once("connect.php");
+require_once("functions.php");
 $dbh = ConnectDB();
 ?>
 
@@ -72,28 +72,28 @@ $dbh = ConnectDB();
 <?php
 //if ( isset($_POST['username'], $_POST['password'], $_POST['email'], $_POST['f_name'], $_POST['l_name'] ) ) {
 if ( isset($_POST['username'] ) ) {
+	
 	echo "<p>";
 	echo $_POST['username'];
 	echo "</p>";
 	try {
-
+	/*
         //$dbh->beginTransaction();
 
-
-
+	
         $query = "INSERT INTO Users(username, password, email, f_name, l_name ) " .
                  "VALUES(:u_name, :pass, :e_mail, :f_name, :l_name)";
 
 	//$dbh->query($query);
         $stmt = $dbh->prepare($query);
         // copy $_POST variable to local variable, Just In Case
-
+	*/
 	$username = $_POST['username'];
 	$email = $_POST['email'];
 	$f_name = $_POST['f_name'];
 	$l_name = $_POST['l_name'];
 	$pass = $_POST['password'];
-
+	/*
         // NOTE: Third argument means binding as an integer.
         // Default is "string", so 3rd arg not needed for strings.
         // (There isn't one for floats, just use string.)
@@ -105,28 +105,89 @@ if ( isset($_POST['username'] ) ) {
 	$stmt->bindValue('l_name', $l_name);
 
         $stmt->execute();
-	
-        $query = "SELECT * " .
-		"FROM Users ";
+	 */
 
-
-	$stmt = $dbh->prepare($query);
-        $stmt->execute();
-
-        // There should only be one, but this means if we get
-        // more than one match we can find out easily.
-	$user = $stmt->fetchAll(PDO::FETCH_OBJ);
-	$howmany = count($user);
-	echo "<p> how many: $howmany </p>";
-	foreach ($user as $curr_user)
+	$user_id = RegisterUser($username, $email, $f_name, $l_name, $pass);
+	if($user_id >=1)
 	{
-		echo "<p> ";
-		echo "Username: $curr_user->username , email: $curr_user->email , password: $curr_user->password, first name: $curr_user->f_name, last name: $curr_user->l_name";
-		echo "</p>\n";
+		$query = "SELECT * " .
+			"FROM Users " .
+			"Where user_id = :uid";
+
+	
+		$stmt = $dbh->prepare($query);
+
+		echo "<p>user: $user_id</p>";
+		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+	
+		$stmt->execute();
+
+        	// There should only be one, but this means if we get
+        	// more than one match we can find out easily.
+		$user = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$howmany = count($user);
+		echo "<p> how many: $howmany </p>";
+		foreach ($user as $curr_user)
+		{
+			echo "<p> ";
+			echo "Username: $curr_user->username , email: $curr_user->email , password: $curr_user->password, first name: $curr_user->f_name, last name: $curr_user->l_name";
+			echo "</p>\n";
+		}
+
+  		echo "<p>Here is what we got: <br/> $Users<p>";
+	}
+	else {
+		echo "<p>user already exists!<p>";
 	}
 
-  	echo "<p>Here is what we got: <br/> $Users<p>";
+	$user_id = LoginUser("jiMbob", "Password1");
+	echo "<p> user_id: $user_id</p>";
 
+	$num_pages = 1;
+	$posts = GetUsersRecentPosts(1,2);
+	$howmany = count($posts);
+	echo "out of get posts $howmany!";
+	$num = count($posts);
+	echo "<p>inside else! $num $howmany</p>";
+
+	if($howmany < 1)
+	{
+		echo "<p> no posts </p>";
+	}
+	else
+	{
+
+		foreach($posts as $post)
+		{
+			echo "<p> inside for each<p/>";
+			echo "<p>";
+			echo "post_id: $post->post_id, title: $post->post_title, votes: $post->post_votes, user: $post->user_id";
+			echo "</p>";
+			$post_id = $post-> post_id;
+			$uploads = GetPostUpload($post_id);
+			$howmany = count($uploads);
+			if($howmany>0)
+			{
+				$curr_upload = $uploads[0];
+				echo "<p>";
+				echo "upload_id: $curr_upload->upload_id, file_name: $curr_upload->file_name, file path $curr_upload->file_path"; 	
+				echo "</p>";
+			}
+			$texts = GetPostText($post_id);
+			$howmany = count($texts);
+			echo "howmany: $howmany";
+                        if($howmany>0)
+                        {
+                                $curr_text = $texts[0];
+                                echo "<p>";
+                                echo "text: $curr_text->post_text";
+                                echo "</p>";
+                        }
+
+		}
+
+	}
+	
         /*
         $howmany = count($grade);
         if ( $howmany != 1 ) {
