@@ -9,14 +9,16 @@
 
 function ConnectDB() {
 
+	echo "in connect";
     /*** mysql server info ***/
     $hostname = '127.0.0.1';
     $username = 'pierosn0';
     $password = 'FaceBark2017';
     $dbname   = 'pierosn0';
+    $charset = 'utf8';
 
     try {
-        $dbh = new PDO("mysql:host=$hostname;dbname=$dbname",
+        $dbh = new PDO("mysql:host=$hostname;dbname=$dbname;charset=$charset",
 		$username, $password);
 	echo "<p> connected successfuly!</p>";
     }

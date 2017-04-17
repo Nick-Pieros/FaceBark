@@ -89,19 +89,46 @@ function LoginUser($username, $pass, $dbh){
 
 }
 
-function GetRecentPosts($page_num, $dbh) {
+function GetRecentPosts($page_num, $user_id, $dbh) {
 	print "in recent posts";
 	$num_per_page = 8;
 	$last_post = $page_num * $num_per_page;
 	$first_post = ($last_post - $num_per_page);
 
 	 try{
+		if ($user_id == 0)
+		{
+			$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+				"username, post_text, file_path, file_name " .
+				"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+				"LEFT JOIN Posts_Text using (post_id)) " .
+				"LEFT JOIN Posts_Uploads using (post_id)) " .
+				"LEFT JOIN Uploads using (upload_id))" .
+				"ORDER BY post_timestamp DESC " .
+				"LIMIT :first,:num_pages";
+			 $stmt = $dbh->prepare($query);
 
-                $query = "SELECT * " .
-                        "FROM Posts " .
-			"ORDER BY post_timestamp DESC " .
-			"LIMIT :first,:num_pages";
-		$stmt = $dbh->prepare($query);
+		}
+		else
+		{
+			echo "user_id = ";
+			echo $user_id;
+
+                        $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+                                "username, post_text, file_path, file_name " .
+                                "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+                                "LEFT JOIN Posts_Text using (post_id)) " .
+                                "LEFT JOIN Posts_Uploads using (post_id)) " .
+				"LEFT JOIN Uploads using (upload_id)) " .
+				"WHERE Posts.user_id = :uid " .
+                                "ORDER BY post_timestamp DESC " .
+                                "LIMIT :first,:num_pages";
+
+			$stmt = $dbh->prepare($query);
+			$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+
+
+		}
                 // copy $_POST variable to local variable, Just In Case
 
                 // NOTE: Third argument means binding as an integer.
@@ -109,15 +136,19 @@ function GetRecentPosts($page_num, $dbh) {
                 // (There isn't one for floats, just use string.)
                 $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
                 $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
-
                 $stmt->execute();
                 $result = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 		$howmany = count($result);
+		echo "\n howmany: ";
+	        echo $howmany;
                 if ( $howmany < 1 ) {
-                        $result = 0;
-                }
-
+        		echo "<p> inside if <p>";	
+			$result = 0;
+		}
+		echo "</br><p>result!!!<p></br>";
+		echo json_encode($result);
+		echo "after json";
 
         } catch(PDOException $e) {
 
@@ -127,6 +158,45 @@ function GetRecentPosts($page_num, $dbh) {
        return $result;
 }
 
+
+function GetPost($post_id, $dbh) {
+	echo "in get post";	
+	try{
+		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+                	"username, post_text, file_path, file_name " .
+                	"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+                	"LEFT JOIN Posts_Text using (post_id)) " .
+                	"LEFT JOIN Posts_Uploads using (post_id)) " .
+			"LEFT JOIN Uploads using (upload_id)) " .
+			"WHERE Posts.post_id = :pid ";
+                $stmt = $dbh->prepare($query);
+
+                // NOTE: Third argument means binding as an integer.
+                // Default is "string", so 3rd arg not needed for strings.
+                // (There isn't one for floats, just use string.)
+                $stmt->bindValue('pid', $post_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+                $howmany = count($result);
+                echo "\n howmany: ";
+                echo $howmany;
+                if ( $howmany < 1 ) {
+                        $result = 0;
+		}
+		echo json_encode($result);
+
+        } catch(PDOException $e) {
+
+                die ('PDO error fetching grade: ' . $e->getMessage() );
+        }
+
+       return $result;
+}
+
+
+/*
+//depricated
 function GetUsersRecentPosts($page_num, $user_id, $dbh) {
 	print "in user posts";
 	$num_per_page = 8;
@@ -162,6 +232,34 @@ function GetUsersRecentPosts($page_num, $user_id, $dbh) {
 
        return $result;
 }
+ */
+
+function GetDogInfo($user_id, $dbh) {
+	try {
+		$query = "SELECT dog_name, dog_breed, dog_weight, dog_bio, file_name, file_path " .
+			"FROM Dogs LEFT JOIN Uploads using(upload_id)" .
+			"WHERE Dogs.user_id = :uid";
+
+		$stmt = $dbh->prepare($query);
+                // copy $_POST variable to local variable, Just In Case
+
+                // NOTE: Third argument means binding as an integer.
+                // Default is "string", so 3rd arg not needed for strings.
+                // (There isn't one for floats, just use string.)
+                $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+		echo json_encode($result);
+
+        } catch(PDOException $e) {
+
+                die ('PDO error fetching grade: ' . $e->getMessage() );
+        }
+
+       return $result;
+}
+
 
 //TODO make this take an array instead of a signle value
 function GetPostUpload($post_id, $dbh) {

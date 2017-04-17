@@ -66,6 +66,7 @@ As a result, setting the person_id to "4 or 1=1" won't work.
 <?php
 require_once("functions.php");
 require_once("connect.php");
+echo "attempting to connect";
 $dbh = ConnectDB();
 ?>
 
@@ -141,15 +142,18 @@ if ( isset($_POST['username'] ) ) {
 		echo "<p>user already exists!<p>";
 	}
 
+	$tmp = GetPost(2, $dbh);
+	$tmp = GetDogInfo(2, $dbh); 
 	$user_id = LoginUser("jiMbob", "Password1", $dbh);
 	echo "<p> user_id: $user_id</p>";
 
 	$num_pages = 1;
-	$posts = GetUsersRecentPosts(1,2, $dbh);
+	$posts = GetRecentPosts(1,2, $dbh);
 	$howmany = count($posts);
 	echo "out of get posts $howmany!";
 	$num = count($posts);
 	echo "<p>inside else! $num $howmany</p>";
+	echo $posts;
 
 	if($howmany < 1)
 	{
@@ -188,6 +192,7 @@ if ( isset($_POST['username'] ) ) {
 		}
 
 	}
+	
 	
         /*
         $howmany = count($grade);
