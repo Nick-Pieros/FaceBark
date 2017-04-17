@@ -14,7 +14,7 @@
 
 <body>
     <div class='header'>
-        <div class='logo'><img src='~pierosn0/awp/FaceBark/images/fbark-logo.png' /></div>
+        <div class='logo'><img src='./images/fbark-logo.png' /></div>
         <ul class='menu'>
             <li class='dropdown'>
                 <span>Nav &#9662;</span>

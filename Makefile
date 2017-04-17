@@ -6,7 +6,7 @@
 # projects.
 DESTDIR = /home/pierosn0/public_html/awp/FaceBark/
 TARGETS = homepage.html login.html post-page_1.html post-page_2.html profile.html safer_sql.php functions.php connect.php 
-SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php
+SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php 
 DIRS    = css
 
 # This target is just here to be the top target in the Makefile.

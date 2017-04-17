@@ -65,6 +65,7 @@ As a result, setting the person_id to "4 or 1=1" won't work.
 <p> Here is your grade from when you were here before (if ever): </p>
 <?php
 require_once("functions.php");
+require_once("connect.php");
 $dbh = ConnectDB();
 ?>
 
@@ -107,7 +108,7 @@ if ( isset($_POST['username'] ) ) {
         $stmt->execute();
 	 */
 
-	$user_id = RegisterUser($username, $email, $f_name, $l_name, $pass);
+	$user_id = RegisterUser($username, $email, $f_name, $l_name, $pass, $dbh);
 	if($user_id >=1)
 	{
 		$query = "SELECT * " .
@@ -140,11 +141,11 @@ if ( isset($_POST['username'] ) ) {
 		echo "<p>user already exists!<p>";
 	}
 
-	$user_id = LoginUser("jiMbob", "Password1");
+	$user_id = LoginUser("jiMbob", "Password1", $dbh);
 	echo "<p> user_id: $user_id</p>";
 
 	$num_pages = 1;
-	$posts = GetUsersRecentPosts(1,2);
+	$posts = GetUsersRecentPosts(1,2, $dbh);
 	$howmany = count($posts);
 	echo "out of get posts $howmany!";
 	$num = count($posts);
@@ -164,7 +165,7 @@ if ( isset($_POST['username'] ) ) {
 			echo "post_id: $post->post_id, title: $post->post_title, votes: $post->post_votes, user: $post->user_id";
 			echo "</p>";
 			$post_id = $post-> post_id;
-			$uploads = GetPostUpload($post_id);
+			$uploads = GetPostUpload($post_id, $dbh);
 			$howmany = count($uploads);
 			if($howmany>0)
 			{
@@ -173,7 +174,7 @@ if ( isset($_POST['username'] ) ) {
 				echo "upload_id: $curr_upload->upload_id, file_name: $curr_upload->file_name, file path $curr_upload->file_path"; 	
 				echo "</p>";
 			}
-			$texts = GetPostText($post_id);
+			$texts = GetPostText($post_id, $dbh);
 			$howmany = count($texts);
 			echo "howmany: $howmany";
                         if($howmany>0)

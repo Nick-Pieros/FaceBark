@@ -7,35 +7,9 @@
 // ConnectDB() - takes no arguments, returns database handle
 // USAGE: $dbh = ConnectDB();
 
-function ConnectDB() {
-
-    /*** mysql server info ***/
-    $hostname = '127.0.0.1';
-    $username = 'pierosn0';
-    $password = 'FaceBark2017';
-    $dbname   = 'pierosn0';
-
-    try {
-        $dbh = new PDO("mysql:host=$hostname;dbname=$dbname",
-		$username, $password);
-	echo "<p> connected successfuly!</p>";
-    }
-    catch(PDOException $e)
-    {
-        die ('PDO error in "ConnectDB()": ' . $e->getMessage() );
-    }
-
-    return $dbh;
-}
-
-function Test() {
-	return "<p>test</p>";
-}
-
-function RegisterUser($username, $email, $pass, $f_name, $l_name){
+function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh){
 
 
-	$dbh = ConnectDB();
 	
 	try{
 		
@@ -73,10 +47,9 @@ function RegisterUser($username, $email, $pass, $f_name, $l_name){
 }
 
 
-function LoginUser($username, $pass){
-	
-	$dbh = ConnectDB();
+function LoginUser($username, $pass, $dbh){
 
+	print "in login";	
         try{
 
 
@@ -116,13 +89,12 @@ function LoginUser($username, $pass){
 
 }
 
-function GetRecentPosts($page_num) {
-
+function GetRecentPosts($page_num, $dbh) {
+	print "in recent posts";
 	$num_per_page = 8;
 	$last_post = $page_num * $num_per_page;
 	$first_post = ($last_post - $num_per_page);
 
-	$dbh = ConnectDB();
 	 try{
 
                 $query = "SELECT * " .
@@ -155,12 +127,12 @@ function GetRecentPosts($page_num) {
        return $result;
 }
 
-function GetUsersRecentPosts($page_num, $user_id) {
-        $num_per_page = 8;
+function GetUsersRecentPosts($page_num, $user_id, $dbh) {
+	print "in user posts";
+	$num_per_page = 8;
         $last_post = $page_num * $num_per_page;
         $first_post = ($last_post - $num_per_page);
 
-        $dbh = ConnectDB();
          try{
 
                 $query = "SELECT * " .
@@ -184,14 +156,15 @@ function GetUsersRecentPosts($page_num, $user_id) {
         } catch(PDOException $e) {
 
                 die ('PDO error fetching grade: ' . $e->getMessage() );
-        }
+	}
+
+	print json_encode($result);
 
        return $result;
 }
 
 //TODO make this take an array instead of a signle value
-function GetPostUpload($post_id) {
-        $dbh = ConnectDB();
+function GetPostUpload($post_id, $dbh) {
          try{
 
                 $query = "SELECT * " .
@@ -220,8 +193,7 @@ function GetPostUpload($post_id) {
 
 
 //TODO make this take an array instead of a signle value
-function GetPostText($post_id) {
-        $dbh = ConnectDB();
+function GetPostText($post_id, $dbh) {
          try{
 
                 $query = "SELECT post_text " .
