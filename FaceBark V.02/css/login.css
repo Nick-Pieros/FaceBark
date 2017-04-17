@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: #D6E9FE;
+}
+.error{
+    color:red;
+    font-size: 10pt;
+}
+.menu-container {
+    color: #fff;
+    background-image: linear-gradient(to bottom right, #4ea288, #3b9860);
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+.menu {
+    width: 900px;
+    display: flex;
+    justify-content: space-around;
+    margin: 10px;
+}
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.header {
+    color: #5995DA;
+    background-color: #D6E9FE;
+    display: flex;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+.logo img {
+    height: 100px;
+    width: auto;
+}
+.photo-signup {
+    display: flex;
+    justify-content: space-around;
+    background-color: #D6E9FE;
+}
+.photo-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 900px;
+    flex-wrap: wrap;
+}
+.photo-grid-item,
+.photo-grid-item img {
+    width: 300px;
+    height: 300px;
+}
+.signup,
+.forgotpass {
+    display: flex;
+    flex-direction: column;
+    /*align-items: center;*/
+}
+.forgotpass {
+    margin-top: 20%;
+}
+.signup-forgotpass {
+    color: #459d74;
+    font-size: 20pt;
+    display: flex;
+    flex-direction: column;
+    background-size: 50%;
+    padding: 5%;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+input {
+    width: 200px;
+    height: 20px;
+}
