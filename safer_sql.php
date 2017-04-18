@@ -144,7 +144,7 @@ if ( isset($_POST['username'] ) ) {
 
 	$tmp = GetPost(2, $dbh);
 	$tmp = GetDogInfo(2, $dbh);
-        $tmp = GetUserInfo(2, $dbh);	
+        $tmp = GetUserInfo(10, $dbh);	
 	$user_id = LoginUser("jiMbob", "Password1", $dbh);
 	echo "<p> user_id: $user_id</p>";
 
