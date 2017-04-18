@@ -196,7 +196,7 @@ function GetPost($post_id, $dbh) {
 
 
 /*
-//depricated
+depricated
 function GetUsersRecentPosts($page_num, $user_id, $dbh) {
 	print "in user posts";
 	$num_per_page = 8;
@@ -211,11 +211,11 @@ function GetUsersRecentPosts($page_num, $user_id, $dbh) {
                         "ORDER BY post_timestamp DESC " .
                         "LIMIT :first,:num_pages";
                 $stmt = $dbh->prepare($query);
-                // copy $_POST variable to local variable, Just In Case
+                 copy $_POST variable to local variable, Just In Case
 
-                // NOTE: Third argument means binding as an integer.
-                // Default is "string", so 3rd arg not needed for strings.
-                // (There isn't one for floats, just use string.)
+                 NOTE: Third argument means binding as an integer.
+                 Default is "string", so 3rd arg not needed for strings.
+                 (There isn't one for floats, just use string.)
                 $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
                 $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
 		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
@@ -260,6 +260,37 @@ function GetDogInfo($user_id, $dbh) {
        return $result;
 }
 
+function GetUserInfo($user_id, $dbh) {
+
+	try {
+		$query = "SELECT * " .
+			"FROM Users " .
+			"WHERE user_id = :uid";
+		$stmt = $dbh->prepare($query);
+                // copy $_POST variable to local variable, Just In Case
+
+                // NOTE: Third argument means binding as an integer.
+                // Default is "string", so 3rd arg not needed for strings.
+                // (There isn't one for floats, just use string.)
+                $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+		echo json_encode($result);
+		$howmany = count($result);
+		if ($howmany = 0)
+		{
+			$result = 0;
+		}
+
+        } catch(PDOException $e) {
+
+                die ('PDO error fetching grade: ' . $e->getMessage() );
+        }
+
+       return $result;
+
+}
 
 //TODO make this take an array instead of a signle value
 function GetPostUpload($post_id, $dbh) {

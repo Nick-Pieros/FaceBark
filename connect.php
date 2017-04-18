@@ -18,8 +18,8 @@ function ConnectDB() {
     $charset = 'utf8';
 
     try {
-        $dbh = new PDO("mysql:host=$hostname;dbname=$dbname;charset=$charset",
-		$username, $password);
+	    $dbh = new PDO("mysql:host=$hostname;dbname=$dbname;charset=$charset"
+		    ,$username, $password);
 	echo "<p> connected successfuly!</p>";
     }
     catch(PDOException $e)
