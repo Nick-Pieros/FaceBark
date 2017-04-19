@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <?php
+// prepare the profile information
 require_once ("functions.php");
 require_once ("connect.php");
 $dbh = ConnectDB();
-$doggoinfo
+$user_id = $_COOKIE['user_id'];
+$userinfo = GetUserInfo($user_id, $dbh);
+$doggoinfo = GetDogInfo($user_id, $dbh);
+$doggoPosts = GetRecentPosts(1, $user_id, $dbh);
 ?>
 <html lang='en'>
 
@@ -20,18 +24,19 @@ $doggoinfo
 
 <body>
     <?php
-    include 'header.php';
+      include 'header.php';
+      print_r($doggoPosts[0]);
     ?>
     <div class='content'>
       <div class='profile-info'>
         <div class='profile-name'>
           <h2>
           <!-- this content will change using php -->
-          CutestPuppyEvR!
+          <?php echo ($userinfo[0]->username)?>
         </h2>
       </div>
         <div class='profile-pic'>
-          <img src='images/seamus_profilePic.jpg'></img>
+          <img src='<?php echo ($doggoinfo[0]->file_path)?>'></img>
         </div>
         <div class='about-me'>
           <div class='doggo-desc'>
@@ -44,39 +49,40 @@ $doggoinfo
             <h5>Bio:</h5>
         </div>
         <div class='doggo-facts'>
-            <h5>Seamus</h5>
+            <h5><?php echo ($doggoinfo[0]->dog_name)?></h5>
             <br/>
-            <h5>Shihpoo</h5>
+            <h5><?php echo ($doggoinfo[0]->dog_breed)?></h5>
             <br/>
-            <h5>21 Pounds</h5>
+            <h5><?php echo ($doggoinfo[0]->dog_weight)?></h5>
             <br/>
-            <h5>Seamus Kane Mullen is one of the family! He loves long walks around the block and loves to bark at squirrels! You can find him in the Mullen household leisurely laying around cuddling with whoever is closest to him. He knows a few keywords such as “You wana go for a walk!?”and “Excuse Me”.</h5>
+            <h5><?php echo ($doggoinfo[0]->dog_bio)?></h5>
         </div>
         </div>
       </div>
       <div class='post-feed'>
+        <?php foreach($doggoPosts as &$post):?>
         <div class='post'>
           <div class='post-left'>
             <div class='post-header'>
                 <h2 class='post-title'>
                   <!-- this content will change using php -->
-                  I must be hungry, but these puppies look like fried chicken.
+                  <?php echo ($post->post_title) ?>
                </h2>
                 <h4 class='post-poster'>
                   <!-- this content will change using php -->
-                  by <a href='./profile.html'>CutestPuppyEvR</a>
+                  by <a href='./profile.html'><?php echo ($post->username) ?> </a>
                </h4>
             </div>
             <div class='post-image'>
                 <!-- this content will change using php -->
-                <a href='post-page_1.html'><img src='images/friedChicken.png'></img></a>
+                <a href='post.php?post_id=<?php echo ($post->post_id) ?>'><img src='<?php echo ($post->file_path) ?>'></img></a>
             </div>
           </div>
         <div class='post-right'>
             <div class='post-desc'>
                 <p>
                     <!-- this content will change using php -->
-                    These puppies are adorable! They look just like fried chicken!
+                    <?php echo ($post->post_text) ?>
                 </p>
             </div>
             <div class='post-voting'>
@@ -89,36 +95,7 @@ $doggoinfo
             </div>
           </div>
         </div>
-        <div class='post'>
-            <div class='post-header'>
-                <h2 class='post-title'>
-                  <!-- this content will change using php -->
-                  Look at our cute puppies... LOOK AT THEM!
-               </h2>
-                <h4 class='post-poster'>
-                  <!-- this content will change using php -->
-                  by <a href='./profile.html'>CutestPuppyEvR</a>
-               </h4>
-            </div>
-            <div class='post-image'>
-                <!-- this content will change using php -->
-                <a href='post-page_2.html'><img src='images/puppiesFeeding.jpg'></img></a>
-            </div>
-            <div class='post-desc'>
-                <p>
-                    <!-- this content will change using php -->
-                    All these puppies must be hungry! I hope they got a good deal on all that food! Can you say $$$!
-                </p>
-            </div>
-            <div class='post-voting'>
-                <div class='post-upvote'>
-                    <img src='images/like-paw.png'></img>
-                </div>
-                <div class='post-downvote'>
-                    <img src='images/dislike-paw.png'></img>
-                </div>
-            </div>
-        </div>
+      <?php endforeach;?>
       </div>
       <div class='right-side-items'>
 

@@ -1,8 +1,7 @@
 /*
-css for post-page.html
-Clifford Black
-David Carlin
-Nicholas Pieros
+by  Clifford Black
+    David Carlin
+    Nicholas Pieros
 */
 .content {
     display: flex;
@@ -31,10 +30,11 @@ Nicholas Pieros
 }
 .post-image {
     width: 100%;
+    display:flex;
+    justify-content: center;
 }
 .post-image img {
-    width: inherit;
-    height: auto;
+    max-width: 100%;
 }
 .post-desc {
     border-bottom: 1px solid black;

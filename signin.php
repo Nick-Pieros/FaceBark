@@ -1,7 +1,7 @@
 <form action='signin.php' method='post'>
    <input type='text' name='signinuser' placeholder='Username'>
    <input type='password' name='signinpassword' placeholder='Password'>
-   <input type='submit' value='Log In'> <span class='error'><?php echo $loginErr?></span>
+   <input type='submit' value='Log In' class='green-btn'> <span class='error'><?php echo $loginErr?></span>
 </form>
 <?php
 require_once ("functions.php");

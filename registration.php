@@ -139,14 +139,14 @@ unset($_COOKIE['user_id']);
                }
                ?>
                <h1>Sign up for free!</h1>
-               <form name='myForm' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='post'>
+               <form name='myForm' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='post' >
                   <input id='username' type='text' name='username' placeholder='Username' value="<?php echo $_POST['username']?>"> <span class='error'><?php echo $unameErr?></span> <br/>
                   <input id='email' type='text' name='email' placeholder='Email' value="<?php echo $_POST['email']?>"> <span class='error'><?php echo $emailErr?></span><br/>
                   <input id='f_name' type='text' name='f_name' placeholder='First Name' value="<?php echo $_POST['f_name']?>"> <span class='error'><?php echo $fnameErr?></span><br/>
                   <input id='l_name' type='text' name='l_name' placeholder='Last Name' value="<?php echo $_POST['l_name']?>"> <span class='error'><?php echo $lnameErr?></span><br/>
                   <input id='password' type='password' name='password' placeholder='Password'> <span class='error'><?php echo $passwordErr?></span><br/>
                   <input id='confirm-password' type='password' name='confpassword' placeholder='Confirm Password'> <span class='error'><?php echo $confPasswordErr?></span><br/>
-                  <input type='submit' value='Sign Up!'>
+                  <input type='submit' value='Sign Up!' class='green-btn'>
                </form>
                <?php echo $userExistsErr; ?>
             </div>
@@ -154,7 +154,7 @@ unset($_COOKIE['user_id']);
                <h1>Forgot password?</h1>
                <form action=''>
                   <input type='text' name='email' placeholder='Email'><br>
-                  <input type='submit' value='Reset Password!'>
+                  <input type='submit' value='Reset Password!' class='green-btn' >
                </form>
             </div>
          </div>
