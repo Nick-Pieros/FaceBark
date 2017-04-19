@@ -255,8 +255,6 @@ function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
 		$new_user_id = $dbh->lastInsertId();
         	$dbh->commit();
 
-		echo "json result: \n";
-		echo json_encode($new_user_id);
     	}
     catch (PDOException $e) {
 	    $dbh->rollback();
@@ -265,5 +263,28 @@ function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
     }
     return $new_user_id;
 }
-	
+
+function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
+{
+	try {
+		
+		$query = "UPDATE Dogs " .
+			"SET dog_name=:name, dog_breed=:breed, dog_weight=:weight, " .
+			"dog_bio=:bio, upload_id=:upid " .
+			"WHERE user_id = :uid";
+		$stmt  = $dbh->prepare($query);
+		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+                $stmt->bindValue('weight', $weight, PDO::PARAM_INT);
+                $stmt->bindValue('name', $name);
+                $stmt->bindValue('breed', $breed);
+                $stmt->bindValue('bio', $bio);
+		$stmt->bindValue('upid', $upload_id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+	}      
+	catch (PDOException $e) {
+            die('PDO error fetching grade: ' . $e->getMessage());
+    }
+}
+
 ?>
