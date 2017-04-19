@@ -142,6 +142,7 @@ if ( isset($_POST['username'] ) ) {
 		echo "<p>user already exists!<p>";
 	}
 
+	$tmp = CreateDogInfo($dbh, "test doggo", "miniture test", 20, "i'm a test!", 3, 4); 
 	$tmp = GetPost(2, $dbh);
 	$tmp = GetDogInfo(2, $dbh); 
 	$user_id = LoginUser("jiMbob", "Password1", $dbh);
