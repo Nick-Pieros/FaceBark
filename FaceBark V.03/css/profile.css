@@ -1,0 +1,82 @@
+/*
+by  Clifford Black
+    David Carlin
+    Nicholas Pieros
+*/
+.content{
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+}
+.profile-info{
+  color:black;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: white;
+  border:2px solid black;
+}
+.profile-name{
+  width:100%;
+}
+.profile-pic{
+  display: flex;
+  justify-content: center;
+  padding-top: .5em;
+  padding-bottom: .5em;
+  background-color: white;
+  width:100%;
+}
+.profile-pic img{
+  width:95%;
+  height:100%;
+}
+.about-me{
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  background-color:white;
+  z-index:2;
+  font-size: 20pt;
+}
+.doggo-desc{
+  padding-left: 1px;
+}
+.doggo-facts h5{
+  font-weight: normal;
+  padding-right:1px;
+}
+.post-feed{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*background-color: #7BB0EC;*/
+  padding:0 1em 0 1em;
+}
+.post{
+  width:40em;
+  display: flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.post-image{
+  overflow:hidden;
+  height:300px;
+}
+.post-image img {
+    width: 100%;
+    height:auto;
+}
+.post-desc{
+  height:300px;
+  overflow:hidden;
+}
+.profile-info{
+  width: 20em;
+  height: 1000px;
+}
+.right-side-items{
+  width: 20em;
+  height: 1000px;
+}
