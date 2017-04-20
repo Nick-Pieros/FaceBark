@@ -139,7 +139,7 @@ function GetPost($post_id, $dbh)
 function GetDogInfo($user_id, $dbh)
 {
     try {
-	    $query = "SELECT dog_name, dog_breed, dog_weight, dog_bio, file_name, file_path " . 
+	    $query = "SELECT dog_name, dog_breed, dog_weight, dog_bio, file_name, file_path, file_type " . 
 		    "FROM Dogs LEFT JOIN Uploads using(upload_id)" . 
 		    "WHERE Dogs.user_id = :uid";
         $stmt  = $dbh->prepare($query);
@@ -252,16 +252,16 @@ function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
 		$stmt->bindValue('breed', $breed);
 		$stmt->bindValue('bio', $bio);
         	$stmt->execute();
-		$new_user_id = $dbh->lastInsertId();
+		$new_dog_id = $dbh->lastInsertId();
         	$dbh->commit();
 
     	}
     catch (PDOException $e) {
 	    $dbh->rollback();
-	    $new_user_id = 0;
+	    $new_dog_id = 0;
 	    die('PDO error fetching grade: ' . $e->getMessage());
     }
-    return $new_user_id;
+    return $new_dog_id;
 }
 
 function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
@@ -285,6 +285,54 @@ function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
 	catch (PDOException $e) {
             die('PDO error fetching grade: ' . $e->getMessage());
     }
+}
+
+function NewUpload($dbh, $file_name, $file_path, $file_type, $user_id)
+{
+        try {
+		$dbh->beginTransaction();
+                $query = "INSERT into Uploads(file_name, file_path, file_type, user_id) " .
+			"VALUES (:fname, :fpath, :ftype, :uid)";
+			
+		$stmt  = $dbh->prepare($query);
+                $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+                $stmt->bindValue('fname', $file_name);
+                $stmt->bindValue('fpath', $file_path);
+                $stmt->bindValue('ftype', $file_type);
+		$stmt->execute();
+                $new_upload_id = $dbh->lastInsertId();
+                $dbh->commit();
+
+        }
+	catch (PDOException $e) {
+		$new_upload_id = 0;
+		$dbh->rollback();
+            die('PDO error fetching grade: ' . $e->getMessage());
+	}
+	return $new_upload_id;
+}
+
+
+function GetDogUpload($dbh, $user_id)
+{
+	try {
+		$query = "SELECT * " .
+			"FROM Uploads " .
+			"WHERE upload_id in " .
+			"(SELECT upload_id " .
+			"FROM Dogs ".
+			"WHERE user_id = :uid)";
+
+		$stmt = $dbh->prepare($query);
+		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+    	}
+    	catch (PDOException $e) {
+    	    die('PDO error fetching grade: ' . $e->getMessage());
+    	}
+    	return $result;
 }
 
 ?>

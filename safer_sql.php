@@ -142,7 +142,8 @@ if ( isset($_POST['username'] ) ) {
 		echo "<p>user already exists!<p>";
 	}
 
-	$tmp = UpdateDogInfo($dbh, "doggo", "miniture test", 20, "i'm a test!", 3, 3); 
+	$tmp = NewUpload($dbh, "do_I_look_like_I_know", "./what/a/jpeg/is/", ".jpg", 3);
+        $tmp = GetDogUpload($dbh, 3); 
 
 	$tmp = GetPost(2, $dbh);
 	$tmp = GetDogInfo(2, $dbh); 

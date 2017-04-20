@@ -5,8 +5,9 @@
 # These lines should be the only ones you have to change for many
 # projects.
 DESTDIR = /home/pierosn0/public_html/awp/FaceBark/
-TARGETS = homepage.html login.html post-page_1.html post-page_2.html profile.html safer_sql.php functions.php connect.php 
-SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php 
+TARGETS = homepage.html login.html post-page_1.html post-page_2.html profile.html safer_sql.php functions.php connect.php homepage.php header.php post-page_1.php post-page_2.php profile.php post.php registration.php signin.php user.php 
+SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php homepage.php header.php post-page_1.php post-page_2.php profile.php post.php registration.php signin.php user.php
+
 DIRS    = css
 
 # This target is just here to be the top target in the Makefile.
