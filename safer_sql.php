@@ -141,8 +141,8 @@ if ( isset($_POST['username'] ) ) {
 	else {
 		echo "<p>user already exists!<p>";
 	}
-
-	$tmp = NewUpload($dbh, "do_I_look_like_I_know", "./what/a/jpeg/is/", ".jpg", 3);
+	$tmp = GetUserByUsername($dbh, "Jimbob");	
+	$tmp = CreatePost($dbh, 2, "How do I make posts?", NULL, 2);
         $tmp = GetDogUpload($dbh, 3); 
 
 	$tmp = GetPost(2, $dbh);

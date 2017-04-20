@@ -335,4 +335,84 @@ function GetDogUpload($dbh, $user_id)
     	return $result;
 }
 
+function CreatePost($dbh, $user_id, $title, $text, $upload)
+{
+	try {
+		$query = "CALL CreatePost(:uid, :title, :text, :upload)";
+
+		$stmt = $dbh->prepare($query);
+		
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':title', $title);
+
+		if(is_null($text))
+		{
+			 $stmt->bindParam(':text', $text, PDO::PARAM_NULL);
+		}
+		else
+		{
+			$stmt->bindParam(':text', $text);
+		}
+
+		if(is_null($upload))
+		{
+			$stmt->bindParam(':upload', $upload, PDO::PARAM_NULL);
+		}
+		else
+		{
+			$stmt->bindParam(':upload', $upload, PDO::PARAM_INT);
+		}
+
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$howmany = count($result);
+		if($howmany == 0)
+		{
+			$result = 0;
+		}
+		else
+		{
+			$result = $result[0];
+			$result = $result->new_post_id;
+		}
+
+	}
+	catch (PDOException $e) {
+            die('PDO error fetching grade: ' . $e->getMessage());
+        }
+        return $result;
+}
+
+
+function GetUserByUsername($dbh, $username)
+{
+	  try {
+		  $query = "SELECT user_id " .
+			  "FROM Users " .
+			  "WHERE username like :uname";
+
+                $stmt = $dbh->prepare($query);
+
+		$stmt->bindParam(':uname', $username);
+		$stmt->execute();  
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
+                }
+                else
+                {
+                        $result = $result[0];
+                        $result = $result->user_id;
+		}
+	}
+        catch (PDOException $e) {
+            die('PDO error fetching grade: ' . $e->getMessage());
+        }
+        return $result;
+}
+
+
+
 ?>
