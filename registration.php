@@ -3,6 +3,7 @@
 require_once ("functions.php");
 require_once ("connect.php");
 $dbh = ConnectDB();
+setcookie ("user_id", "", 1);
 unset($_COOKIE['user_id']);
 ?>
 <html lang='en'>
@@ -126,7 +127,7 @@ unset($_COOKIE['user_id']);
                    if(!($user_id > 1)){
                      $userExistsErr = "<span class='error'> User already exists, please log in! </span>";
                    } else {
-                     header("Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/profile.php");
+                     header("Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/verify-user.php");
                    }
                  }
                }

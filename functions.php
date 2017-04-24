@@ -66,24 +66,24 @@ function GetRecentPosts($page_num, $user_id, $dbh)
     $first_post   = ($last_post - $num_per_page);
     try {
         if ($user_id == 0) {
-		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " . 
-			"username, post_text, file_path, file_name " . 
-			"FROM ((((Posts LEFT JOIN Users using(user_id)) " . 
-			"LEFT JOIN Posts_Text using (post_id)) " . 
-			"LEFT JOIN Posts_Uploads using (post_id)) " . 
-			"LEFT JOIN Uploads using (upload_id))" . 
-			"ORDER BY post_timestamp DESC " . 
+		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+			"username, post_text, file_path, file_name " .
+			"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+			"LEFT JOIN Posts_Text using (post_id)) " .
+			"LEFT JOIN Posts_Uploads using (post_id)) " .
+			"LEFT JOIN Uploads using (upload_id))" .
+			"ORDER BY post_timestamp DESC " .
 			"LIMIT :first,:num_pages";
             $stmt  = $dbh->prepare($query);
         } else {
-		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " . 
-			"username, post_text, file_path, file_name " . 
-			"FROM ((((Posts LEFT JOIN Users using(user_id)) " . 
-			"LEFT JOIN Posts_Text using (post_id)) " . 
-			"LEFT JOIN Posts_Uploads using (post_id)) " . 
-			"LEFT JOIN Uploads using (upload_id)) " . 
-			"WHERE Posts.user_id = :uid " . 
-			"ORDER BY post_timestamp DESC " . 
+		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+			"username, post_text, file_path, file_name " .
+			"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+			"LEFT JOIN Posts_Text using (post_id)) " .
+			"LEFT JOIN Posts_Uploads using (post_id)) " .
+			"LEFT JOIN Uploads using (upload_id)) " .
+			"WHERE Posts.user_id = :uid " .
+			"ORDER BY post_timestamp DESC " .
 			"LIMIT :first,:num_pages";
             $stmt  = $dbh->prepare($query);
             $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
@@ -109,12 +109,12 @@ function GetRecentPosts($page_num, $user_id, $dbh)
 function GetPost($post_id, $dbh)
 {
     try {
-	    $query = "SELECT post_id, post_title, post_timestamp, post_votes, " . 
-		    "username, post_text, file_path, file_name " . 
-		    "FROM ((((Posts LEFT JOIN Users using(user_id)) " . 
-		    "LEFT JOIN Posts_Text using (post_id)) " . 
-		    "LEFT JOIN Posts_Uploads using (post_id)) " . 
-		    "LEFT JOIN Uploads using (upload_id)) " . 
+	    $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+		    "username, post_text, file_path, file_name " .
+		    "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+		    "LEFT JOIN Posts_Text using (post_id)) " .
+		    "LEFT JOIN Posts_Uploads using (post_id)) " .
+		    "LEFT JOIN Uploads using (upload_id)) " .
 		    "WHERE Posts.post_id = :pid ";
         $stmt  = $dbh->prepare($query);
         // NOTE: Third argument means binding as an integer.
@@ -133,14 +133,11 @@ function GetPost($post_id, $dbh)
     }
     return $result;
 }
-
-
-
 function GetDogInfo($user_id, $dbh)
 {
     try {
-	    $query = "SELECT dog_name, dog_breed, dog_weight, dog_bio, file_name, file_path, file_type " . 
-		    "FROM Dogs LEFT JOIN Uploads using(upload_id)" . 
+	    $query = "SELECT dog_name, dog_breed, dog_weight, dog_bio, file_name, file_path, file_type " .
+		    "FROM Dogs LEFT JOIN Uploads using(upload_id)" .
 		    "WHERE Dogs.user_id = :uid";
         $stmt  = $dbh->prepare($query);
         // copy $_POST variable to local variable, Just In Case
@@ -159,8 +156,8 @@ function GetDogInfo($user_id, $dbh)
 function GetUserInfo($user_id, $dbh)
 {
     try {
-	    $query = "SELECT * " . 
-		    "FROM Users " . 
+	    $query = "SELECT * " .
+		    "FROM Users " .
 		    "WHERE user_id = :uid";
         $stmt  = $dbh->prepare($query);
         // copy $_POST variable to local variable, Just In Case
@@ -184,11 +181,11 @@ function GetUserInfo($user_id, $dbh)
 function GetPostUpload($post_id, $dbh)
 {
     try {
-	    $query = "SELECT * " . 
-		    "FROM Uploads " . 
-		    "WHERE upload_id in( " . 
-		    "SELECT upload_id " . 
-		    "FROM Posts_Uploads " . 
+	    $query = "SELECT * " .
+		    "FROM Uploads " .
+		    "WHERE upload_id in( " .
+		    "SELECT upload_id " .
+		    "FROM Posts_Uploads " .
 		    "WHERE post_id = :pid) ";
         $stmt  = $dbh->prepare($query);
         // copy $_POST variable to local variable, Just In Case
@@ -223,14 +220,14 @@ function GetPostText($post_id, $dbh)
     }
     return $result;
 }
-
-function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id) {
+function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
+{
 
 	try {
 		$dbh->beginTransaction();
 		if($upload_id == 0)
 		{
-			
+
 			$query = "INSERT into Dogs(dog_name, dog_breed, dog_weight, dog_bio, user_id) " .
 				"VALUES(:name, :breed, :weight, :bio, :uid)";
 			$stmt  = $dbh->prepare($query);
@@ -263,11 +260,10 @@ function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
     }
     return $new_dog_id;
 }
-
 function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
 {
 	try {
-		
+
 		$query = "UPDATE Dogs " .
 			"SET dog_name=:name, dog_breed=:breed, dog_weight=:weight, " .
 			"dog_bio=:bio, upload_id=:upid " .
@@ -280,20 +276,19 @@ function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
                 $stmt->bindValue('bio', $bio);
 		$stmt->bindValue('upid', $upload_id, PDO::PARAM_INT);
 		$stmt->execute();
-		
-	}      
+
+	}
 	catch (PDOException $e) {
             die('PDO error fetching grade: ' . $e->getMessage());
     }
 }
-
 function NewUpload($dbh, $file_name, $file_path, $file_type, $user_id)
 {
         try {
 		$dbh->beginTransaction();
                 $query = "INSERT into Uploads(file_name, file_path, file_type, user_id) " .
 			"VALUES (:fname, :fpath, :ftype, :uid)";
-			
+
 		$stmt  = $dbh->prepare($query);
                 $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
                 $stmt->bindValue('fname', $file_name);
@@ -311,8 +306,6 @@ function NewUpload($dbh, $file_name, $file_path, $file_type, $user_id)
 	}
 	return $new_upload_id;
 }
-
-
 function GetDogUpload($dbh, $user_id)
 {
 	try {
@@ -334,14 +327,14 @@ function GetDogUpload($dbh, $user_id)
     	}
     	return $result;
 }
-
+//text and picture can be null
 function CreatePost($dbh, $user_id, $title, $text, $upload)
 {
 	try {
 		$query = "CALL CreatePost(:uid, :title, :text, :upload)";
 
 		$stmt = $dbh->prepare($query);
-		
+
 		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
 		$stmt->bindParam(':title', $title);
 
@@ -382,8 +375,6 @@ function CreatePost($dbh, $user_id, $title, $text, $upload)
         }
         return $result;
 }
-
-
 function GetUserByUsername($dbh, $username)
 {
 	  try {
@@ -393,10 +384,37 @@ function GetUserByUsername($dbh, $username)
 
                 $stmt = $dbh->prepare($query);
 
-		$stmt->bindParam(':uname', $username);
-		$stmt->execute();  
-		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
-                $howmany = count($result);
+  		$stmt->bindParam(':uname', $username);
+  		$stmt->execute();
+  		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                  $howmany = count($result);
+                  if($howmany == 0)
+                  {
+                          $result = 0;
+                  }
+                  else
+                  {
+                          $result = $result[0];
+                          $result = $result->user_id;
+  		}
+  	}
+    catch (PDOException $e) {
+        die('PDO error fetching grade: ' . $e->getMessage());
+    }
+        return $result;
+}
+function GetUploadId($dbh, $filename)
+{
+  try {
+    $query = "SELECT upload_id " .
+      "FROM Uploads " .
+      "WHERE file_name=:fname";
+      $stmt = $dbh->prepare($query);
+
+      $stmt->bindParam(':fname', $filename);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+      $howmany = count($result);
                 if($howmany == 0)
                 {
                         $result = 0;
@@ -404,15 +422,12 @@ function GetUserByUsername($dbh, $username)
                 else
                 {
                         $result = $result[0];
-                        $result = $result->user_id;
-		}
-	}
-        catch (PDOException $e) {
-            die('PDO error fetching grade: ' . $e->getMessage());
-        }
-        return $result;
+                        $result = $result->upload_id;
+    }
+  }
+  catch (PDOException $e) {
+      die('PDO error fetching grade: ' . $e->getMessage());
+  }
+      return $result;
 }
-
-
-
 ?>

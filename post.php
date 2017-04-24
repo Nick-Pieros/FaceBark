@@ -23,7 +23,6 @@ if($postinfo == 0){
 <body>
   <?php
   include 'header.php';
-  print_r($postinfo);
   ?>
   <div class='content'>
 
@@ -36,7 +35,7 @@ if($postinfo == 0){
            </h2>
             <h4 class='post-poster'>
               <!-- this content will change using php -->
-              by <a href='./profile.html'><?php echo ($postinfo[0]->username) ?> </a>
+              by <a href='./user.php?username=<?php echo ($postinfo[0]->username) ?>'><?php echo ($postinfo[0]->username) ?> </a>
            </h4>
         </div>
         <div class='post-image'>

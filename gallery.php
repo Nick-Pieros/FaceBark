@@ -3,12 +3,10 @@
 require_once ("functions.php");
 require_once ("connect.php");
 $dbh=ConnectDB();
-$username=$_GET['username'];
-//will work on this
-$user_id=GetUserByUsername($dbh, $username);
-$userinfo=GetUserInfo($user_id,$dbh);
-$doggoinfo=GetDogInfo($user_id, $dbh);
-$doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
+$user_id=$_COOKIE['user_id'];
+$page=$_GET['page'];
+$userinfo=GetUserInfo($user_id, $dbh);
+$galleryPosts=GetRecentPosts($page, 0, $dbh); ?>
 <html lang='en'>
 
 <head>
@@ -24,46 +22,14 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
 </head>
 
 <body>
-    <?php include 'header.php';?>
+    <?php include 'header.php'; ?>
     <div class='content'>
-        <div class='profile-info'>
-            <div class='profile-name'>
-                <h2>
-          <!-- this content will change using php -->
-          <?php echo ($userinfo[0]->username)?>
-        </h2>
-            </div>
-            <div class='profile-pic'>
-                <img src='<?php echo ($doggoinfo[0]->file_path)?>'></img>
-            </div>
-
-            <div class='about-me'>
-          <div class='doggo-desc'>
-            <h5>Name:</h5>
-            <br/>
-            <h5>Breed:</h5>
-            <br/>
-            <h5>Weight:</h5>
-            <br/>
-            <h5>Bio:</h5>
-        </div>
-        <div class='doggo-facts'>
-            <h5><?php echo ($doggoinfo[0]->dog_name)?></h5>
-            <br/>
-            <h5><?php echo ($doggoinfo[0]->dog_breed)?></h5>
-            <br/>
-            <h5><?php echo ($doggoinfo[0]->dog_weight)?></h5>
-            <br/>
-            <h5><?php echo ($doggoinfo[0]->dog_bio)?></h5>
-        </div>
-            </div>
-        </div>
         <div class='post-feed'>
-            <?php // if a doggo hasn 't made any posts, display this
-        if($doggoPosts == 0){
-          echo "Nothing to see here. Go out there and bark!";
-        }
-        foreach($doggoPosts as &$post):?>
+            <?php
+            if($galleryPosts==0){
+              echo "There's nothing to see here.";
+            }
+            foreach($galleryPosts as &$post):?>
         <div class='post '>
           <div class='post-left '>
             <div class='post-header '>
@@ -76,10 +42,11 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
                   by <a href='./user.php?username=<?php echo ($post->username) ?>'><?php echo ($post->username) ?> </a>
                </h4>
             </div>
-            <?php if($post->file_path): // link to posts with no image?>
+            <?php if($post->file_path):?>
             <div class='post-image'>
                 <!-- this content will change using php -->
               <a href='post.php?post_id=<?php echo ($post->post_id) ?>'>  <img src='<?php echo ($post->file_path) ?>'></img></a>
+
             </div>
           <?php else: ?>
             <a href='post.php?post_id=<?php echo ($post->post_id) ?>'>
@@ -109,7 +76,13 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
     <?php endforeach;?>
     </div>
     <div class='right-side-items'>
-
+      <?php if($page > 1) :?>
+        <a href='./gallery.php?page=<?php echo ($page-1) ?>'>Prev </a>
+      <?php endif; ?>
+        <br/>
+      <?php if($galleryPosts!= 0) :?>
+        <a href='./gallery.php?page=<?php echo ($page+1) ?>'>Next </a>
+      <?php endif; ?>
     </div>
     </div>
 </body>

@@ -8,6 +8,7 @@
 // USAGE: $dbh = ConnectDB();
 
 function ConnectDB() {
+
     /*** mysql server info ***/
     $hostname = '127.0.0.1';
     $username = 'pierosn0';
@@ -23,6 +24,7 @@ function ConnectDB() {
     {
         die ('PDO error in "ConnectDB()": ' . $e->getMessage() );
     }
+
     return $dbh;
 }
 

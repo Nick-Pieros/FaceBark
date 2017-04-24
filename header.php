@@ -4,11 +4,11 @@
         <li class='dropdown'>
             <span>Nav &#9662;</span>
             <ul class='features-menu'>
-                <li><a href='#'>Home</a>
+                <li><a href='gallery.php?page=1'>Gallery</a>
                 </li>
-                <li><a href='#'>Profile</a>
+                <li><a href='profile.php'>Profile</a>
                 </li>
-                <li><a href='#'>Gallery</a>
+                <li><a href='registration.php'>Sign out</a>
                 </li>
             </ul>
         </li>
