@@ -430,4 +430,70 @@ function GetUploadId($dbh, $filename)
   }
       return $result;
 }
+
+
+function GetHashtag($dbh, $hashtag) {
+
+	try {
+		$query = "SELECT hashtag_id " .
+                	"FROM Hashtags " .
+			"WHERE hashtag_text like :hashtag";
+		$stmt = $dbh->prepare($query);
+
+		$stmt->bindParam(':hashtag', $hashtag);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$howmany = count($result);
+		if($howmany == 0)
+		{
+			echo "howmany = 0";
+			$result = 0;
+		}
+		else
+		{
+			$result = $result[0];
+	      		$result = $result->hashtag_id;
+		}
+	}
+	catch (PDOException $e) {
+		die('PDO error fetching grade: ' . $e->getMessage());
+	}
+	return $result;
+
+}
+
+
+function CreateHashtag($dbh, $hashtag, $post_id, $comment_id) {
+
+	try {
+		$query = "CALL CreateHashtag(:hashtag, :pid, :cid)";
+
+                $stmt = $dbh->prepare($query);
+
+		$stmt->bindParam(':hashtag', $hashtag);
+		$stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':cid', $comment_id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
+                }
+                else
+                {
+                        $result = $result[0];
+                        $result = $result->hash_id;
+                }
+
+        }
+        catch (PDOException $e) {
+		$result = 0;
+		die('PDO error fetching grade: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
 ?>
