@@ -530,5 +530,35 @@ function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
 
 }
 
+function GetTopLevelComments($dbh, $post_id) {
+
+	 try {
+		 $query = "SELECT * " .
+			 "FROM Comments " . 
+			 "WHERE post_id = :pid AND comment_id NOT IN ".
+			 "(SELECT child_comment_id " .
+			 "FROM Comment_Children) " .
+			 "ORDER BY comment_timestamp ASC";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
+                }
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error fetching grade: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
 
 ?>
