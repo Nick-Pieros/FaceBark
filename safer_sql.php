@@ -141,8 +141,7 @@ if ( isset($_POST['username'] ) ) {
 	else {
 		echo "<p>user already exists!<p>";
 	}
-	$tmp = GetHashtag($dbh, 'testHash3');
-	$tmp = CreateHashtag($dbh, 'testHash3', 4, 0);
+	$tmp = CreateComment($dbh, 2, 2, 'test comment 4', 24);
 	$tmp = GetUserByUsername($dbh, "Jimbob");	
 	$tmp = CreatePost($dbh, 2, "How do I make posts?", NULL, 2);
         $tmp = GetDogUpload($dbh, 3); 

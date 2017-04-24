@@ -496,4 +496,39 @@ function CreateHashtag($dbh, $hashtag, $post_id, $comment_id) {
 
 }
 
+function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
+
+        try {
+                $query = "CALL CreateComment(:pid, :uid, :comment, :parent_id)";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':comment', $comment);
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':parent_id', $parent_comment_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
+                }
+                else
+                {
+                        $result = $result[0];
+                        $result = $result->new_comment_id;
+		}
+
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error fetching grade: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
+
 ?>
