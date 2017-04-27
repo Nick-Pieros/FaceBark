@@ -108,7 +108,7 @@ if ( isset($_POST['username'] ) ) {
 
         $stmt->execute();
 	 */
-
+	/*
 	$user_id = RegisterUser($username, $email, $f_name, $l_name, $pass, $dbh);
 	if($user_id >=1)
 	{
@@ -141,6 +141,8 @@ if ( isset($_POST['username'] ) ) {
 	else {
 		echo "<p>user already exists!<p>";
 	}
+	 */
+	$tmp = VoteOnPost($dbh, 214,2, -1000);
 	$tmp = GetTopLevelComments($dbh, 2);
 	$tmp = GetUserByUsername($dbh, "Jimbob");	
 	$tmp = CreatePost($dbh, 2, "How do I make posts?", NULL, 2);

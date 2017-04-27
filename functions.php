@@ -533,8 +533,8 @@ function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
 function GetTopLevelComments($dbh, $post_id) {
 
 	 try {
-		 $query = "SELECT * " .
-			 "FROM Comments " . 
+		 $query = "SELECT comment_id, comment_text, comment_timestamp, comment_votes, username " .
+                         "FROM Comments LEFT JOIN Users using(user_id) " .
 			 "WHERE post_id = :pid AND comment_id NOT IN ".
 			 "(SELECT child_comment_id " .
 			 "FROM Comment_Children) " .
@@ -550,7 +550,71 @@ function GetTopLevelComments($dbh, $post_id) {
                 if($howmany == 0)
                 {
                         $result = 0;
+		}
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error fetching top level comments: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
+
+function GetAllComments($dbh, $post_id) {
+
+	try {
+		$query = "SELECT comment_id, comment_text, comment_timestamp, comment_votes, username " .
+			"FROM Comments LEFT JOIN Users using(user_id) " .
+			"WHERE post_id = :pid " .
+			"ORDER BY comment_timestamp ASC";
+
+		$stmt = $dbh->prepare($query);
+		$stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->execute();
+
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$howmany = count($result);
+	}
+	catch (PDOException $e) {
+		$result = [];
+		die('PDO error fetching all comments: ' . $e->getMessage());
+	}
+	return $result;
+}
+
+function VoteOnPost($dbh, $user_id, $post_id, $vote) {
+
+	try {
+		if($vote >= 0)
+		{
+			$vote = 1;
+		}
+		else
+		{
+			$vote = -1;
+		}
+                $query = "CALL VoteOnPost(:uid, :pid, :vote)";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':vote', $vote, PDO::PARAM_INT);
+
+                $stmt->execute();
+
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
                 }
+                else
+                {
+                        $result = $result[0];
+                        $result = $result->was_success;
+		}
         }
         catch (PDOException $e) {
                 $result = 0;
@@ -559,6 +623,5 @@ function GetTopLevelComments($dbh, $post_id) {
         return $result;
 
 }
-
 
 ?>
