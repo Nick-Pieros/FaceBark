@@ -143,7 +143,8 @@ if ( isset($_POST['username'] ) ) {
 	}
 	 */
 
-	$tmp = DeleteUser($dbh, 302);
+	$tmp = DeletePostUpload($dbh, 61);
+	$tmp = DeletePostText($dbh, 71);
 	
 	/*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);

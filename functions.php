@@ -704,9 +704,54 @@ function DeleteUser($dbh, $user_id)
         }
         catch (PDOException $e) {
                 $result = 0;
-                die('PDO error deleting post: ' . $e->getMessage());
+                die('PDO error deleting user: ' . $e->getMessage());
         }
         return $result;
 }
+
+function DeletePostUpload($dbh, $post_id) {
+
+	try {
+                $query = "DELETE FROM Posts_Uploads " .
+                        "WHERE post_id = :pid";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+		$result = $stmt->rowCount();
+
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error deleting post upload: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
+
+function DeletePostText($dbh, $post_id) {
+	try {
+		$query = "UPDATE Posts_Text " .
+			"SET post_text = '[deleted]' " .
+			"WHERE post_id = :pid";
+
+		$stmt = $dbh->prepare($query);
+
+		$stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+		$result = $stmt->rowCount();
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error deleting post text: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
 
 ?>
