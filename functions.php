@@ -624,4 +624,89 @@ function VoteOnPost($dbh, $user_id, $post_id, $vote) {
 
 }
 
+
+function DeleteComment($dbh, $post_id, $comment_id, $user_id) {
+
+        try {
+		$query = "UPDATE Comments " .
+			"SET user_id = 1, comment_text = '[deleted]' " .
+			"WHERE comment_id = :cid AND (user_id = :uid OR :uid = ( " .
+			"SELECT user_id " .
+			"FROM Posts " .
+			"WHERE post_id = :pid))";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':cid', $comment_id, PDO::PARAM_INT);
+
+
+                $stmt->execute();
+
+                $result = $stmt->rowCount();
+	}
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error deleting comments: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
+
+function DeletePost($dbh, $post_id, $user_id)
+{
+	try {
+		$query = "DELETE FROM Posts " .
+			"WHERE post_id = :pid AND user_id = :uid";
+
+		$stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		 $stmt->execute();
+
+                $result = $stmt->rowCount();
+
+	}
+        catch (PDOException $e) {
+        	$result = 0;
+                die('PDO error deleting post: ' . $e->getMessage());
+        }
+        return $result;
+
+}
+
+
+function DeleteUser($dbh, $user_id)
+{
+        try {
+                $query = "CALL DeleteUser(:uid)";
+
+                $stmt = $dbh->prepare($query);
+
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+
+		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if($howmany == 0)
+                {
+                        $result = 0;
+                }
+                else
+                {
+                        $result = $result[0];
+                        $result = $result->uid;
+		}
+
+        }
+        catch (PDOException $e) {
+                $result = 0;
+                die('PDO error deleting post: ' . $e->getMessage());
+        }
+        return $result;
+}
+
 ?>

@@ -142,6 +142,10 @@ if ( isset($_POST['username'] ) ) {
 		echo "<p>user already exists!<p>";
 	}
 	 */
+
+	$tmp = DeleteUser($dbh, 302);
+	
+	/*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);
 	$tmp = GetTopLevelComments($dbh, 2);
 	$tmp = GetUserByUsername($dbh, "Jimbob");	
@@ -200,7 +204,7 @@ if ( isset($_POST['username'] ) ) {
 	}
 	
 	
-        /*
+        
         $howmany = count($grade);
         if ( $howmany != 1 ) {
             echo "<p>That's funny; I got $howmany results....</p>\n";
@@ -210,8 +214,8 @@ if ( isset($_POST['username'] ) ) {
             echo "Name: $g_info->fname $g_info->lname - Grade $g_info->grade";
             echo "</p>\n";
         }
-         */
-
+        
+	*/
         //$dbh->commit();
         } catch(PDOException $e) {
 	//	$dbh->rollback();
