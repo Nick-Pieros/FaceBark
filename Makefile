@@ -5,8 +5,8 @@
 # These lines should be the only ones you have to change for many
 # projects.
 DESTDIR = /home/pierosn0/public_html/awp/FaceBark/
-TARGETS = homepage.html login.html post-page_1.html post-page_2.html profile.html safer_sql.php functions.php connect.php avatar-update.php avatar-upload.php bio-update-form.php create-post.php gallery.php header.php profile.php signin.php ui-create-post.php update-bio.php upload2.php user.php verify-user.php post.php registration.php 
-SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php avatar-update.php avatar-upload.php bio-update-form.php create-post.php gallery.php header.php profile.php signin.php ui-create-post.php update-bio.php upload2.php user.php verify-user.php post.php registration.php
+TARGETS = homepage.html login.html post-page_1.html post-page_2.html profile.html safer_sql.php functions.php connect.php avatar-update.php avatar-upload.php bio-update-form.php create-post.php gallery.php header.php profile.php signin.php ui-create-post.php update-bio.php upload2.php user.php verify-user.php post.php registration.php user_functions.php 
+SOURCES = homepage.html login.html post-page_1.html post-page_2.html profile.html safter_sql.php functions.php connect.php avatar-update.php avatar-upload.php bio-update-form.php create-post.php gallery.php header.php profile.php signin.php ui-create-post.php update-bio.php upload2.php user.php verify-user.php post.php registration.php user_functions.php
 DIRS    = css
 
 # This target is just here to be the top target in the Makefile.

@@ -66,6 +66,7 @@ As a result, setting the person_id to "4 or 1=1" won't work.
 <?php
 require_once("functions.php");
 require_once("connect.php");
+require_once("user_functions.php");
 echo "attempting to connect";
 $dbh = ConnectDB();
 ?>
@@ -143,6 +144,7 @@ if ( isset($_POST['username'] ) ) {
 	}
 	 */
 
+	$tmp = RegisterUser("testuser3", "test2@user.com", "password1234", "test", "user", $dbh); 
 	$tmp = DeletePostUpload($dbh, 61);
 	$tmp = DeletePostText($dbh, 71);
 	
