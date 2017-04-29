@@ -5,6 +5,8 @@
  */
 // ConnectDB() - takes no arguments, returns database handle
 // USAGE: $dbh = ConnectDB();
+
+/*
 function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh)
 {
     try {
@@ -59,6 +61,7 @@ function LoginUser($username, $pass, $dbh)
     }
     return $curr_user_id;
 }
+ */
 function GetRecentPosts($page_num, $user_id, $dbh)
 {
     $num_per_page = 8;
@@ -678,7 +681,7 @@ function DeletePost($dbh, $post_id, $user_id)
 
 }
 
-
+/*
 function DeleteUser($dbh, $user_id)
 {
         try {
@@ -708,7 +711,7 @@ function DeleteUser($dbh, $user_id)
         }
         return $result;
 }
-
+ */
 function DeletePostUpload($dbh, $post_id) {
 
 	try {
