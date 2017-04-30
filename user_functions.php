@@ -47,7 +47,6 @@ function LoginUser($username, $pass, $dbh)
 {
 	try {
 		$pass = sha1("salt" . $pass);
-		echo "pass: $pass </br>";
 		$query = "SELECT user_id " . 
 			"FROM Users " . 
 			"WHERE (username = :username AND password = :password AND user_deleted = 0)";

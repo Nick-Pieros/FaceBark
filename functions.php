@@ -790,4 +790,75 @@ function DeletePostText($dbh, $post_id) {
 }
 
 
+function SearchPostsByHashtags($dbh, $page_num, $hashtag) {
+    $num_per_page = 8;
+    $last_post    = $page_num * $num_per_page;
+    $first_post   = ($last_post - $num_per_page);
+    try {
+          $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+                   "username, post_text, file_path, file_name " .
+                    "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+                    "LEFT JOIN Posts_Text using (post_id)) " .
+                    "LEFT JOIN Posts_Uploads using (post_id)) " .
+                    "LEFT JOIN Uploads using (upload_id)) " .
+		    "WHERE Users.user_deleted = 0 AND Posts.post_id in (SELECT post_id " .
+		    "FROM Posts_Hashtags " .
+		    "WHERE hashtag_id = (SELECT hashtag_id " .
+		    "FROM Hashtags " .
+		    "WHERE hashtag_text like :hashtag )) " .
+                    "ORDER BY post_timestamp DESC " .
+                    "LIMIT :first,:num_pages";
+          $stmt  = $dbh->prepare($query);
+	  $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
+	  $stmt->bindValue('hashtag', $hashtag);
+          $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
+          $stmt->execute();
+          $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+          $howmany = count($result);
+          if ($howmany < 1) {
+              $result = 0;
+	  }
+	  echo json_encode($result);
+    }
+    catch (PDOException $e) {
+        die('PDO error getting recent posts: ' . $e->getMessage());
+    }
+    return $result;
+}
+
+
+function SearchPostsByTitle($dbh, $page_num, $title) {
+    $num_per_page = 8;
+    $last_post    = $page_num * $num_per_page;
+    $first_post   = ($last_post - $num_per_page);
+    try {
+          $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+                   "username, post_text, file_path, file_name " .
+                    "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+                    "LEFT JOIN Posts_Text using (post_id)) " .
+                    "LEFT JOIN Posts_Uploads using (post_id)) " .
+                    "LEFT JOIN Uploads using (upload_id)) " .
+                    "WHERE Users.user_deleted = 0 ANDS Posts.post_title like :title" . 
+                    "ORDER BY post_timestamp DESC " .
+                    "LIMIT :first,:num_pages";
+          $stmt  = $dbh->prepare($query);
+          $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
+          $stmt->bindValue('title', $title);
+          $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
+          $stmt->execute();
+          $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+          $howmany = count($result);
+          if ($howmany < 1) {
+              $result = 0;
+          }
+          echo json_encode($result);
+    }
+    catch (PDOException $e) {
+        die('PDO error getting recent posts: ' . $e->getMessage());
+    }
+    return $result;
+}
+
+
+
 ?>
