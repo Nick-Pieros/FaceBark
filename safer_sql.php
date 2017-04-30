@@ -146,7 +146,14 @@ if ( isset($_POST['username'] ) ) {
 
 	//$tmp = SendResetPasswordEmail($dbh, 307);
 	//$tmp = ResetPassword($dbh, 'HatePasswords', 'bc6ebe8c915ca6e2ef4b4e6671c9b87b272326b2'); 
-	$tmp = SearchPostsByTitle($dbh, 1, 'test');
+	$tmp = DeletePostUpload($dbh, 13, 3); 
+	echo json_encode($tmp);
+	$tmp = DeletePostText($dbh, 24, 3);
+	echo "</br>";
+	echo $tmp;
+	$tmp = DeletePost($dbh, 61, 307);
+	echo "</br>$tmp";
+
 	//echo json_encode($tmp);
 /*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);

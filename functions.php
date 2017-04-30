@@ -669,7 +669,8 @@ function DeleteComment($dbh, $post_id, $comment_id, $user_id) {
 			"WHERE comment_id = :cid AND (user_id = :uid OR :uid = ( " .
 			"SELECT user_id " .
 			"FROM Posts " .
-			"WHERE post_id = :pid))";
+			"WHERE post_id = :pid) " . 
+			"OR :uid in (SELECT * From Admin_Users))";
 
                 $stmt = $dbh->prepare($query);
 
@@ -695,13 +696,15 @@ function DeletePost($dbh, $post_id, $user_id)
 {
 	try {
 		$query = "DELETE FROM Posts " .
-			"WHERE post_id = :pid AND user_id = :uid";
+			"WHERE post_id = :pid AND (user_id = :uid OR :uid in ( " .
+			"SELECT * " .
+			"FROM Admin_Users))";
 
 		$stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
                 $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
-		 $stmt->execute();
+		$stmt->execute();
 
                 $result = $stmt->rowCount();
 
@@ -745,15 +748,21 @@ function DeleteUser($dbh, $user_id)
         return $result;
 }
  */
-function DeletePostUpload($dbh, $post_id) {
+function DeletePostUpload($dbh, $post_id, $user_id) {
 
 	try {
                 $query = "DELETE FROM Posts_Uploads " .
-                        "WHERE post_id = :pid";
+                        "WHERE post_id = :pid  AND post_id in ( " .
+                        "SELECT post_id " .
+                        "FROM Posts " .
+                        "WHERE user_id = :uid OR :uid in ( " .
+                        "SELECT * " .
+                        "FROM Admin_Users )) ";
 
                 $stmt = $dbh->prepare($query);
 
-                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
                 $stmt->execute();
 
 		$result = $stmt->rowCount();
@@ -768,15 +777,21 @@ function DeletePostUpload($dbh, $post_id) {
 }
 
 
-function DeletePostText($dbh, $post_id) {
+function DeletePostText($dbh, $post_id, $user_id) {
 	try {
 		$query = "UPDATE Posts_Text " .
 			"SET post_text = '[deleted]' " .
-			"WHERE post_id = :pid";
+			"WHERE post_id = :pid AND post_id in ( " .
+			"SELECT post_id " . 
+			"FROM Posts " .
+			"WHERE user_id = :uid OR :uid in ( " .
+			"SELECT * " .
+			"FROM Admin_Users )) ";
 
 		$stmt = $dbh->prepare($query);
 
 		$stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
                 $stmt->execute();
 
 		$result = $stmt->rowCount();
@@ -838,7 +853,7 @@ function SearchPostsByTitle($dbh, $page_num, $title) {
                     "LEFT JOIN Posts_Text using (post_id)) " .
                     "LEFT JOIN Posts_Uploads using (post_id)) " .
                     "LEFT JOIN Uploads using (upload_id)) " .
-                    "WHERE Users.user_deleted = 0 ANDS Posts.post_title like :title" . 
+                    "WHERE Users.user_deleted = 0 AND Posts.post_title like CONCAT('%', :title , '%') " . 
                     "ORDER BY post_timestamp DESC " .
                     "LIMIT :first,:num_pages";
           $stmt  = $dbh->prepare($query);
@@ -851,7 +866,6 @@ function SearchPostsByTitle($dbh, $page_num, $title) {
           if ($howmany < 1) {
               $result = 0;
           }
-          echo json_encode($result);
     }
     catch (PDOException $e) {
         die('PDO error getting recent posts: ' . $e->getMessage());
@@ -859,6 +873,26 @@ function SearchPostsByTitle($dbh, $page_num, $title) {
     return $result;
 }
 
+function SearchUsers($dbh, $username) {
+	try {
+		$query = "SELECT user_id, username " .
+			 "FROM Users " .
+			 "WHERE user_deleted = 0 AND user_id > 1 AND username like CONCAT('%', :username, '%')";
+		$stmt  = $dbh->prepare($query);
+		$stmt->bindValue('username', $username);
+		$stmt->execute();
+		$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$howmany = count($result);
+		if ($howmany < 1) {
+			$result = 0;
+		}
+          echo json_encode($result);
+    }
+    catch (PDOException $e) {
+        die('PDO error getting recent posts: ' . $e->getMessage());
+    }
+    return $result;
+}
 
 
 ?>
