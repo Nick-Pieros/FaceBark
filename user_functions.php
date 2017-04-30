@@ -378,48 +378,63 @@ function ResetPassword($dbh, $new_pass, $key) {
 
 //type is either comment or post
 //link is the link to the post/comment
-function SendNotification($dbh, $user_id, $type, $link) {
-        try {
-                $query = "SELECT username, email " .
-                        "FROM Users " .
-                        "WHERE user_id = :uid AND user_deleted = 0";
+function SendNotification($dbh, $user_list, $type_list, $link_list) {
+	try {
+		$size = count($user_list);
+		if($size != count($type_list) || $size != count($link_list))
+		{
+			$result = -1;
+		}
+		else
+		{
+			for($i =0; $i<$size; $i++)
+			{
+				$user_id = $user_list[$i];
+				$type = $type_list[$i];
+				$link = $link_list[$i];
+				
+                		$query = "SELECT username, email " .
+                		        "FROM Users " .
+                		        "WHERE user_id = :uid AND user_deleted = 0";
 
-                $stmt = $dbh->prepare($query);
-
-                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-                $howmany = count($result);
-                if($howmany == 0)
-                {
-                        //user not found
-                        $result = 0;
-                }
-                else
-                {
-                        $result = $result[0];
-                        $email = $result->email;
-                        $username = $result->username;
-                        $host = "elvis.rowan.edu";
-                        $site = "FaceBark";
-                        $myemail = "pierosn0@elvis.rowan.edu";
-                        $subject = "$site: Someone Mentioned You!";
-                        $headers = "From: $myemail \r\n" .
-                                   "Reply-To: $myemail \r\n" .
-                                   'X-Mailer: PHP/' . phpversion();
-                        $message = "Hi $username, You were mentioned in someone's $type! \r\n\r\n" .
-                                   "why don't you come check it out?:\r\n\r\n".
-                                   "http://$link \r\n";
-			$result = 1;
-			mail($email, $subject, $message, $headers);
-
-                }
-
+                		$stmt = $dbh->prepare($query);
+		
+		                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		                $stmt->execute();
+		
+		                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+		                $howmany = count($result);
+		                if($howmany == 0)
+		                {
+		                        //user not found
+		                        $result = 0;
+		                }
+		                else
+		                {
+		                        $result = $result[0];
+		                        $email = $result->email;
+		                        $username = $result->username;
+		                        $host = "elvis.rowan.edu";
+		                        $site = "FaceBark";
+		                        $myemail = "pierosn0@elvis.rowan.edu";
+		                        $subject = "$site: Someone Mentioned You!";
+		                        $headers = "From: $myemail \r\n" .
+		                                   "Reply-To: $myemail \r\n" .
+		                                   'X-Mailer: PHP/' . phpversion();
+		                        $message = "Hi $username, You were mentioned in someone's $type! \r\n\r\n" .
+		                                   "why don't you come check it out?:\r\n\r\n".
+		                                   "http://$link \r\n";
+					$result = 1;
+					mail($email, $subject, $message, $headers);
+		
+				}
+			}
+		}
+	
 	}
-        catch (PDOException $e) {
-                $result = 0;
-                die('PDO error sending a notification: ' . $e->getMessage());
+	catch (PDOException $e) {
+		$result = 0;
+	        die('PDO error sending a notification: ' . $e->getMessage());
 	}
         return $result;
 }

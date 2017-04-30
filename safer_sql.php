@@ -146,7 +146,10 @@ if ( isset($_POST['username'] ) ) {
 
 	//$tmp = SendResetPasswordEmail($dbh, 307);
 	//$tmp = ResetPassword($dbh, 'HatePasswords', 'bc6ebe8c915ca6e2ef4b4e6671c9b87b272326b2'); 
-	$tmp = SendNotification($dbh, 307,"comment", "elvis.rowan.edu/~pierosn0/FaceBark/");
+	$user_list = array(307, 307, 307);
+	$type_list = array("post", "comment", "comment");
+	$link_list = array('google.com', 'elvis.rowan.edu', 'rowan.edu');
+	$tmp = SendNotification($dbh, $user_list, $type_list, $link_list);
 	//echo json_encode($tmp);
 /*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);
