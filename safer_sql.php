@@ -144,9 +144,8 @@ if ( isset($_POST['username'] ) ) {
 	}
 	 */
 
-	$tmp = RegisterUser("testuser3", "test2@user.com", "password1234", "test", "user", $dbh); 
-	$tmp = DeletePostUpload($dbh, 61);
-	$tmp = DeletePostText($dbh, 71);
+	
+	$tmp = SendResetPasswordEmail($dbh, 306);
 	
 	/*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);
