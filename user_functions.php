@@ -93,14 +93,16 @@ function LoginUser($username, $pass, $dbh)
 }
 
 
-function DeleteUser($dbh, $user_id)
+function DeleteUser($dbh, $user_id, $admin)
 {
 	try {
-		$query = "CALL DeleteUser(:uid)";
+		$query = "CALL DeleteUser(:uid, :admin)";
 
                 $stmt = $dbh->prepare($query);
 
-                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(':admin', $admin, PDO::PARAM_INT);
+
                 $stmt->execute();
 
                 $result = $stmt->fetchAll(PDO::FETCH_OBJ);

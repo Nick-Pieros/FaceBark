@@ -895,4 +895,30 @@ function SearchUsers($dbh, $username) {
 }
 
 
+function IsAdminUser($dbh, $user_id) {
+
+        try {
+                $query = "SELECT count(*) " .
+                         "FROM Admin_Users " .
+                         "WHERE user_id = :uid";
+		$stmt  = $dbh->prepare($query);
+		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+                $stmt->execute();
+		$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+                $howmany = count($result);
+                if ($howmany < 1) {
+                        $result = 0;
+		}
+		else
+		{
+			$result = 1;
+		}
+    }
+    catch (PDOException $e) {
+        die('PDO error getting recent posts: ' . $e->getMessage());
+    }
+    return $result;
+}
+
+
 ?>
