@@ -9,8 +9,9 @@ function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh)
 {
 	try {
 		$key = sha1($username . $email . "salt");
-		$password = sha1("salt" . $pass);
-                $query = "CALL RegisterUser(:uname, :pass, :email, :f_name, :l_name, :key)";
+		$pass = sha1("salt" . $pass);
+		echo "pass: $pass </br>";
+		$query = "CALL RegisterUser(:uname, :pass, :email, :f_name, :l_name, :key)";
 
                 $stmt = $dbh->prepare($query);
 
@@ -45,9 +46,11 @@ function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh)
 function LoginUser($username, $pass, $dbh)
 {
 	try {
+		$pass = sha1("salt" . $pass);
+		echo "pass: $pass </br>";
 		$query = "SELECT user_id " . 
 			"FROM Users " . 
-			"WHERE (username = :username AND password = :password)";
+			"WHERE (username = :username AND password = :password AND user_deleted = 0)";
 		$stmt  = $dbh->prepare($query);
 		// copy $_POST variable to local variable, Just In Case
 		// NOTE: Third argument means binding as an integer.
@@ -58,18 +61,36 @@ function LoginUser($username, $pass, $dbh)
 		$stmt->execute();
 		$result        = $stmt->fetchAll(PDO::FETCH_OBJ);
 		$howmany       = count($result);
-		$curr_urser_id = 0;
 		$curr_user     = $result[0];
-		$curr_user_id  = 0;
-		if ($howmany == 1) {
-			$curr_user_id = $curr_user->user_id;
+		if ($howmany == 0) {
+			
+			$query = "SELECT tmp_user_id " .
+                        	  "FROM Tmp_Users " .
+                        	  "WHERE (tmp_username = :username AND tmp_password = :password)";
+        	        $stmt  = $dbh->prepare($query);
+	                // copy $_POST variable to local variable, Just In Case
+        	        // NOTE: Third argument means binding as an integer.
+        	        // Default is "string", so 3rd arg not needed for strings.
+        	        // (There isn't one for floats, just use string.)
+        	        $stmt->bindParam(':username', $username);
+        	        $stmt->bindParam(':password', $pass);
+
+			$stmt->execute();
+			$result        = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$howmany       = count($result);
+			$curr_user     = $result[0];
+			if ($howmany == 0) {
+                        	$curr_user = null;
+                	}
+
 		}
+
 	}
 	catch (PDOException $e) {
-		$curr_user_id = -1;
+		$curr_user = -1;
 		die('PDO error logging in user: ' . $e->getMessage());
 	}
-	return $curr_user_id;
+	return $curr_user;
 }
 
 
@@ -134,7 +155,8 @@ function ValidateUser($dbh, $key) {
 
 function SendValidationEmail($dbh, $tmp_user_id) {
 	try {
-		$query = "SELECT tmp_username, tmp_email, tmp_user_key, last_validation_attempt, num_validation_attempts " .
+		$now = time();
+		$query = "SELECT tmp_username, tmp_email, last_validation_attempt, num_validation_attempts " .
 			"FROM Tmp_Users " .
 			"WHERE tmp_user_id = :uid";
 
@@ -155,11 +177,11 @@ function SendValidationEmail($dbh, $tmp_user_id) {
 				date_default_timezone_set("America/New_York");
                         	$result = $result[0];
 				$last_validation_attempt = strtotime($result->last_validation_attempt);
-				$one_hour_ago = time() - 3600;
+				$one_hour_ago = $now - 3600;
 				$num_validation_attempts = $result->num_validation_attempts;
 				$email = $result->tmp_email;
 				$username = $result->tmp_username;
-				$key = $result->tmp_user_key;
+				$key = sha1($username . $now . $email . "salt");
 				if($num_validation_attempts >= 5)
 				{
 					//too many attempts
@@ -187,12 +209,13 @@ function SendValidationEmail($dbh, $tmp_user_id) {
 						   "(If you did not register at $site, \r\n" .
 						   "just ignore this message.)\r\n";
 					mail($email, $subject, $message, $headers);
-
-					 $query = "UPDATE Tmp_Users " .
-                                        "SET num_validation_attempts = num_validation_attempts + 1, last_validation_attempt = CURRENT_TIMESTAMP() ".
+					$query = "UPDATE Tmp_Users " .
+						 "SET num_validation_attempts = num_validation_attempts + 1, last_validation_attempt = CURRENT_TIMESTAMP(), " .
+						 "tmp_user_key = :key " .
                                         "WHERE tmp_user_id = :uid";
         	                        $stmt = $dbh->prepare($query);
-	                                $stmt->bindParam(':uid', $tmp_user_id, PDO::PARAM_INT);
+					$stmt->bindParam(':uid', $tmp_user_id, PDO::PARAM_INT);
+					$stmt->bindParam(':key', $key);
 					$stmt->execute();
 
 					$result=1;
@@ -216,10 +239,11 @@ function SendValidationEmail($dbh, $tmp_user_id) {
 }
 
 function SendResetPasswordEmail($dbh, $user_id)	{
-        try {
-                $query = "SELECT username, email, user_key, last_attempt, num_attempts " .
+	try {
+		$now = time();
+                $query = "SELECT username, email, last_attempt, num_attempts " .
                         "FROM Users JOIN User_Keys USING(user_id)" .
-                        "WHERE user_id = :uid";
+                        "WHERE user_id = :uid AND user_deleted = 0";
 
                 $stmt = $dbh->prepare($query);
 
@@ -242,8 +266,8 @@ function SendResetPasswordEmail($dbh, $user_id)	{
                         $num_attempts = $result->num_attempts;
                         $email = $result->email;
                         $username = $result->username;
-			$key = $result->user_key;
-                        if($num_attempts >= 5)
+			$key = sha1($username . $now . $email . "salt");
+			if($num_attempts >= 5)
                         {
                                 //too many attempts
                                 $result = -1;
@@ -271,10 +295,12 @@ function SendResetPasswordEmail($dbh, $user_id)	{
                                 mail($email, $subject, $message, $headers);
 
                                 $query = "UPDATE User_Keys " .
-                                	 "SET num_attempts = num_attempts + 1, last_attempt = CURRENT_TIMESTAMP() ".
+					"SET num_attempts = num_attempts + 1, last_attempt = CURRENT_TIMESTAMP(), " .
+					"user_key = :key " .
                                          "WHERE user_id = :uid";
                                 $stmt = $dbh->prepare($query);
-                                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+				$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+				$stmt->bindParam(':key', $key);
 				$stmt->execute();
 				//it worked!			
 				$result = 1;
@@ -299,5 +325,55 @@ function SendResetPasswordEmail($dbh, $user_id)	{
 	return $result;
 
 }
+
+function ResetPassword($dbh, $new_pass, $key) {
+
+	try {
+		$new_pass = sha1("salt" . $new_pass);
+		
+		$query = "UPDATE Users  " .
+			"SET password = :new_pass " .
+			"WHERE user_deleted = 0 AND user_id = (SELECT user_id " .
+			"FROM User_Keys " .
+			"WHERE user_key = :key)";
+		$stmt = $dbh->prepare($query);
+		$stmt->bindParam(':new_pass', $new_pass);
+		$stmt->bindParam(':key', $key);
+		$stmt->execute();
+		$result = $stmt->rowCount();
+		if($result > 0)
+		{
+	
+
+			$query = "SELECT user_id " .
+				 "FROM User_Keys " .
+				 "WHERE user_key = :key";
+			$stmt = $dbh->prepare($query);
+		        $stmt->bindParam(':key', $key);
+			
+        	        $stmt->execute();
+
+
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
+	                $howmany = count($result);
+			if($howmany == 0)
+	                {
+	                        $result = 0;
+	                }
+	                else
+	                {
+	                        $result = $result[0];
+	                        $result = $result->user_id;
+			}
+			
+		}
+	}
+	catch (PDOException $e) {
+                $result = 0;
+                die('PDO error validating the user: ' . $e->getMessage());
+        }
+        return $result;
+}
+
 ?>
 
