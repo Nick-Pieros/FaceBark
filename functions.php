@@ -34,6 +34,7 @@ function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh)
     }
     return $new_user_id;
 }
+
 function LoginUser($username, $pass, $dbh)
 {
     try {
@@ -75,6 +76,7 @@ function GetRecentPosts($page_num, $user_id, $dbh)
 			"LEFT JOIN Posts_Text using (post_id)) " .
 			"LEFT JOIN Posts_Uploads using (post_id)) " .
 			"LEFT JOIN Uploads using (upload_id))" .
+			"WHERE Users.user_deleted = 0 " .
 			"ORDER BY post_timestamp DESC " .
 			"LIMIT :first,:num_pages";
             $stmt  = $dbh->prepare($query);
@@ -85,7 +87,7 @@ function GetRecentPosts($page_num, $user_id, $dbh)
 			"LEFT JOIN Posts_Text using (post_id)) " .
 			"LEFT JOIN Posts_Uploads using (post_id)) " .
 			"LEFT JOIN Uploads using (upload_id)) " .
-			"WHERE Posts.user_id = :uid " .
+			"WHERE Posts.user_id = :uid AND Users.userdeleted = 0 " .
 			"ORDER BY post_timestamp DESC " .
 			"LIMIT :first,:num_pages";
             $stmt  = $dbh->prepare($query);
@@ -105,7 +107,7 @@ function GetRecentPosts($page_num, $user_id, $dbh)
         }
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error getting recent posts: ' . $e->getMessage());
     }
     return $result;
 }
@@ -132,7 +134,7 @@ function GetPost($post_id, $dbh)
         }
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching a post: ' . $e->getMessage());
     }
     return $result;
 }
@@ -152,16 +154,16 @@ function GetDogInfo($user_id, $dbh)
         $result = $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching dog info: ' . $e->getMessage());
     }
     return $result;
 }
 function GetUserInfo($user_id, $dbh)
 {
     try {
-	    $query = "SELECT * " .
+	    $query = "SELECT user_id, username, email, f_name, l_name " .
 		    "FROM Users " .
-		    "WHERE user_id = :uid";
+		    "WHERE user_id = :uid AND user_deleted = 0";
         $stmt  = $dbh->prepare($query);
         // copy $_POST variable to local variable, Just In Case
         // NOTE: Third argument means binding as an integer.
@@ -176,7 +178,7 @@ function GetUserInfo($user_id, $dbh)
         }
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching the user\'s info: ' . $e->getMessage());
     }
     return $result;
 }
@@ -200,7 +202,7 @@ function GetPostUpload($post_id, $dbh)
         $result = $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching the post\'s upload: ' . $e->getMessage());
     }
     return $result;
 }
@@ -219,7 +221,7 @@ function GetPostText($post_id, $dbh)
         $result = $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching the post\'s text: ' . $e->getMessage());
     }
     return $result;
 }
@@ -259,7 +261,7 @@ function CreateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
     catch (PDOException $e) {
 	    $dbh->rollback();
 	    $new_dog_id = 0;
-	    die('PDO error fetching grade: ' . $e->getMessage());
+	    die('PDO error creating the dog\'s info: ' . $e->getMessage());
     }
     return $new_dog_id;
 }
@@ -282,7 +284,7 @@ function UpdateDogInfo($dbh, $name, $breed, $weight, $bio, $user_id, $upload_id)
 
 	}
 	catch (PDOException $e) {
-            die('PDO error fetching grade: ' . $e->getMessage());
+            die('PDO error updating the dog\'s info: ' . $e->getMessage());
     }
 }
 function NewUpload($dbh, $file_name, $file_path, $file_type, $user_id)
@@ -305,7 +307,7 @@ function NewUpload($dbh, $file_name, $file_path, $file_type, $user_id)
 	catch (PDOException $e) {
 		$new_upload_id = 0;
 		$dbh->rollback();
-            die('PDO error fetching grade: ' . $e->getMessage());
+            die('PDO error creating a new upload: ' . $e->getMessage());
 	}
 	return $new_upload_id;
 }
@@ -326,7 +328,7 @@ function GetDogUpload($dbh, $user_id)
 		$result = $stmt->fetchAll(PDO::FETCH_OBJ);
     	}
     	catch (PDOException $e) {
-    	    die('PDO error fetching grade: ' . $e->getMessage());
+    	    die('PDO error getting the dog\'s upload: ' . $e->getMessage());
     	}
     	return $result;
 }
@@ -374,7 +376,7 @@ function CreatePost($dbh, $user_id, $title, $text, $upload)
 
 	}
 	catch (PDOException $e) {
-            die('PDO error fetching grade: ' . $e->getMessage());
+            die('PDO error creating the post: ' . $e->getMessage());
         }
         return $result;
 }
@@ -383,7 +385,7 @@ function GetUserByUsername($dbh, $username)
 	  try {
 		  $query = "SELECT user_id " .
 			  "FROM Users " .
-			  "WHERE username like :uname";
+			  "WHERE username like :uname AND user_deleted = 0";
 
                 $stmt = $dbh->prepare($query);
 
@@ -402,10 +404,41 @@ function GetUserByUsername($dbh, $username)
   		}
   	}
     catch (PDOException $e) {
-        die('PDO error fetching grade: ' . $e->getMessage());
+        die('PDO error fetching the user by name: ' . $e->getMessage());
     }
         return $result;
 }
+
+function GetUserByEmail($dbh, $email)
+{
+          try {
+                  $query = "SELECT user_id " .
+                          "FROM Users " .
+                          "WHERE email = :mail  AND user_deleted = 0";
+
+                $stmt = $dbh->prepare($query);
+
+                $stmt->bindParam(':mail', $email);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                  $howmany = count($result);
+                  if($howmany == 0)
+                  {
+                          $result = 0;
+                  }
+                  else
+                  {
+                          $result = $result[0];
+                          $result = $result->user_id;
+                }
+        }
+    catch (PDOException $e) {
+        die('PDO error fetching the user by email: ' . $e->getMessage());
+    }
+        return $result;
+}
+
+
 function GetUploadId($dbh, $filename)
 {
   try {
@@ -429,7 +462,7 @@ function GetUploadId($dbh, $filename)
     }
   }
   catch (PDOException $e) {
-      die('PDO error fetching grade: ' . $e->getMessage());
+      die('PDO error fetching the upload id of the file: ' . $e->getMessage());
   }
       return $result;
 }
@@ -459,7 +492,7 @@ function GetHashtag($dbh, $hashtag) {
 		}
 	}
 	catch (PDOException $e) {
-		die('PDO error fetching grade: ' . $e->getMessage());
+		die('PDO error fetching the id of the hastag: ' . $e->getMessage());
 	}
 	return $result;
 
@@ -493,7 +526,7 @@ function CreateHashtag($dbh, $hashtag, $post_id, $comment_id) {
         }
         catch (PDOException $e) {
 		$result = 0;
-		die('PDO error fetching grade: ' . $e->getMessage());
+		die('PDO error creating the hashtags: ' . $e->getMessage());
         }
         return $result;
 
@@ -527,7 +560,7 @@ function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
         }
         catch (PDOException $e) {
                 $result = 0;
-                die('PDO error fetching grade: ' . $e->getMessage());
+                die('PDO error creating comments: ' . $e->getMessage());
         }
         return $result;
 
@@ -581,7 +614,7 @@ function GetAllComments($dbh, $post_id) {
 	}
 	catch (PDOException $e) {
 		$result = [];
-		die('PDO error fetching all comments: ' . $e->getMessage());
+		die('PDO error fetching all comments for the post: ' . $e->getMessage());
 	}
 	return $result;
 }
@@ -621,7 +654,7 @@ function VoteOnPost($dbh, $user_id, $post_id, $vote) {
         }
         catch (PDOException $e) {
                 $result = 0;
-                die('PDO error fetching grade: ' . $e->getMessage());
+                die('PDO error voting on the post: ' . $e->getMessage());
         }
         return $result;
 
