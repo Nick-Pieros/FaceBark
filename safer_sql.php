@@ -151,7 +151,10 @@ if ( isset($_POST['username'] ) ) {
 //	$tmp = DeletePostText($dbh, 24, 3);
 //	echo "</br>";
 //	echo $tmp;
-	$tmp = IsAdminUser($dbh, 307);
+	$users = array("nicktester", "deacide");
+        $types = array("post", "comment");
+	$links = array("https://google.com", "google.com");	
+	$tmp = SendNotification($dbh, $users, $types, $links);	
 	echo "</br>$tmp";
 
 	//echo json_encode($tmp);

@@ -389,17 +389,17 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 		{
 			for($i =0; $i<$size; $i++)
 			{
-				$user_id = $user_list[$i];
+				$username = $user_list[$i];
 				$type = $type_list[$i];
 				$link = $link_list[$i];
 
-                		$query = "SELECT username, email " .
+                		$query = "SELECT email " .
                 		        "FROM Users " .
-                		        "WHERE user_id = :uid AND user_deleted = 0";
+                		        "WHERE username like :uname AND user_deleted = 0";
 
                 		$stmt = $dbh->prepare($query);
 
-		                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+		                $stmt->bindParam(':uname', $username);
 		                $stmt->execute();
 
 		                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -413,7 +413,6 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 		                {
 		                        $result = $result[0];
 		                        $email = $result->email;
-		                        $username = $result->username;
 		                        $host = "elvis.rowan.edu";
 		                        $site = "FaceBark";
 		                        $myemail = "pierosn0@elvis.rowan.edu";
