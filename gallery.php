@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<?php // prepare the profile information
-require_once ("functions.php");
-require_once ("connect.php");
-$dbh=ConnectDB();
-$user_id=$_COOKIE['user_id'];
-$page=$_GET['page'];
-$userinfo=GetUserInfo($user_id, $dbh);
-$galleryPosts=GetRecentPosts($page, 0, $dbh); ?>
+<?php
+  // prepare the profile information
+  require_once ("functions.php");
+  require_once ("connect.php");
+  $dbh=ConnectDB();
+  $user_id=$_COOKIE['user_id'];
+  $page=$_GET['page'];
+  $userinfo=GetUserInfo($user_id, $dbh);
+  $galleryPosts=GetRecentPosts($page, 0, $dbh);
+?>
 <html lang='en'>
 
 <head>
@@ -30,16 +32,16 @@ $galleryPosts=GetRecentPosts($page, 0, $dbh); ?>
               echo "There's nothing to see here.";
             }
             foreach($galleryPosts as &$post):?>
-        <div class='post '>
-          <div class='post-left '>
-            <div class='post-header '>
-                <h2 class='post-title '>
+        <div class='post'>
+          <div class='post-left'>
+            <div class='post-header'>
+                <h2 class='post-title'>
                   <!-- this content will change using php -->
                   <?php echo ($post->post_title) ?>
                </h2>
-                <h4 class='post-poster '>
+                <h4 class='post-poster'>
                   <!-- this content will change using php -->
-                  by <a href='./user.php?username=<?php echo ($post->username) ?>'><?php echo ($post->username) ?> </a>
+                  by <a href='./user.php?username=<?php echo ($post->username) ?>'><?php echo ($post->username) ?> </a> on <?php echo $post->post_timestamp?>
                </h4>
             </div>
             <?php if($post->file_path):?>
@@ -65,12 +67,17 @@ $galleryPosts=GetRecentPosts($page, 0, $dbh); ?>
         </div>
         <div class='post-voting'>
             <div class='post-upvote'>
-                <img src='images/like-paw.png'></img>
+                <a href='vote.php?vote=1&post_id=<?php echo $post->post_id?>'><img src='images/like-paw.png'></img></a>
             </div>
             <div class='post-downvote'>
-                <img src='images/dislike-paw.png'></img>
+                <a href='vote.php?vote=-1&post_id=<?php echo $post->post_id?>'><img src='images/dislike-paw.png'></img></a>
             </div>
         </div>
+        <div>
+        <h4>
+          Popularity <?php echo $post->post_votes;?>
+        </h4>
+      </div>
     </div>
     </div>
     <?php endforeach;?>

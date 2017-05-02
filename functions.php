@@ -65,51 +65,50 @@ function LoginUser($username, $pass, $dbh)
  */
 function GetRecentPosts($page_num, $user_id, $dbh)
 {
-    $num_per_page = 8;
-    $last_post    = $page_num * $num_per_page;
-    $first_post   = ($last_post - $num_per_page);
-    try {
-        if ($user_id == 0) {
-		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
-			"username, post_text, file_path, file_name " .
-			"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
-			"LEFT JOIN Posts_Text using (post_id)) " .
-			"LEFT JOIN Posts_Uploads using (post_id)) " .
-			"LEFT JOIN Uploads using (upload_id))" .
-			"WHERE Users.user_deleted = 0 " .
-			"ORDER BY post_timestamp DESC " .
-			"LIMIT :first,:num_pages";
-            $stmt  = $dbh->prepare($query);
-        } else {
-		$query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
-			"username, post_text, file_path, file_name " .
-			"FROM ((((Posts LEFT JOIN Users using(user_id)) " .
-			"LEFT JOIN Posts_Text using (post_id)) " .
-			"LEFT JOIN Posts_Uploads using (post_id)) " .
-			"LEFT JOIN Uploads using (upload_id)) " .
-			"WHERE Posts.user_id = :uid AND Users.userdeleted = 0 " .
-			"ORDER BY post_timestamp DESC " .
-			"LIMIT :first,:num_pages";
-            $stmt  = $dbh->prepare($query);
-            $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
-        }
-        // copy $_POST variable to local variable, Just In Case
-        // NOTE: Third argument means binding as an integer.
-        // Default is "string", so 3rd arg not needed for strings.
-        // (There isn't one for floats, just use string.)
-        $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
-        $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
-        $stmt->execute();
-        $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
-        $howmany = count($result);
-        if ($howmany < 1) {
-            $result = 0;
-        }
-    }
-    catch (PDOException $e) {
-        die('PDO error getting recent posts: ' . $e->getMessage());
-    }
-    return $result;
+  $num_per_page = 8;
+ $last_post    = $page_num * $num_per_page;
+ $first_post   = ($last_post - $num_per_page);
+ try {
+     if ($user_id == 0) {
+ $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+   "username, post_text, file_path, file_name " .
+   "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+   "LEFT JOIN Posts_Text using (post_id)) " .
+   "LEFT JOIN Posts_Uploads using (post_id)) " .
+   "LEFT JOIN Uploads using (upload_id))" .
+   "ORDER BY post_timestamp DESC " .
+   "LIMIT :first,:num_pages";
+         $stmt  = $dbh->prepare($query);
+     } else {
+ $query = "SELECT post_id, post_title, post_timestamp, post_votes, " .
+   "username, post_text, file_path, file_name " .
+   "FROM ((((Posts LEFT JOIN Users using(user_id)) " .
+   "LEFT JOIN Posts_Text using (post_id)) " .
+   "LEFT JOIN Posts_Uploads using (post_id)) " .
+   "LEFT JOIN Uploads using (upload_id)) " .
+   "WHERE Posts.user_id = :uid " .
+   "ORDER BY post_timestamp DESC " .
+   "LIMIT :first,:num_pages";
+         $stmt  = $dbh->prepare($query);
+         $stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+     }
+     // copy $_POST variable to local variable, Just In Case
+     // NOTE: Third argument means binding as an integer.
+     // Default is "string", so 3rd arg not needed for strings.
+     // (There isn't one for floats, just use string.)
+     $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
+     $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
+     $stmt->execute();
+     $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+     $howmany = count($result);
+     if ($howmany < 1) {
+         $result = 0;
+     }
+ }
+ catch (PDOException $e) {
+     die('PDO error fetching grade: ' . $e->getMessage());
+ }
+ return $result;
 }
 function GetPost($post_id, $dbh)
 {
@@ -482,7 +481,6 @@ function GetHashtag($dbh, $hashtag) {
 		$howmany = count($result);
 		if($howmany == 0)
 		{
-			echo "howmany = 0";
 			$result = 0;
 		}
 		else
@@ -669,7 +667,7 @@ function DeleteComment($dbh, $post_id, $comment_id, $user_id) {
 			"WHERE comment_id = :cid AND (user_id = :uid OR :uid = ( " .
 			"SELECT user_id " .
 			"FROM Posts " .
-			"WHERE post_id = :pid) " . 
+			"WHERE post_id = :pid) " .
 			"OR :uid in (SELECT * From Admin_Users))";
 
                 $stmt = $dbh->prepare($query);
@@ -694,23 +692,23 @@ function DeleteComment($dbh, $post_id, $comment_id, $user_id) {
 
 function DeletePost($dbh, $post_id, $user_id)
 {
-	try {
-		$query = "DELETE FROM Posts " .
-			"WHERE post_id = :pid AND (user_id = :uid OR :uid in ( " .
-			"SELECT * " .
-			"FROM Admin_Users))";
+    try {
+    $query = "DELETE FROM Posts " .
+      "WHERE post_id = :pid AND (user_id = :uid OR :uid in ( " .
+      "SELECT * " .
+      "FROM Admin_Users))";
 
-		$stmt = $dbh->prepare($query);
+    $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
                 $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
-		$stmt->execute();
+    $stmt->execute();
 
                 $result = $stmt->rowCount();
 
-	}
+  }
         catch (PDOException $e) {
-        	$result = 0;
+          $result = 0;
                 die('PDO error deleting post: ' . $e->getMessage());
         }
         return $result;
@@ -782,7 +780,7 @@ function DeletePostText($dbh, $post_id, $user_id) {
 		$query = "UPDATE Posts_Text " .
 			"SET post_text = '[deleted]' " .
 			"WHERE post_id = :pid AND post_id in ( " .
-			"SELECT post_id " . 
+			"SELECT post_id " .
 			"FROM Posts " .
 			"WHERE user_id = :uid OR :uid in ( " .
 			"SELECT * " .
@@ -824,8 +822,8 @@ function SearchPostsByHashtags($dbh, $page_num, $hashtag) {
                     "ORDER BY post_timestamp DESC " .
                     "LIMIT :first,:num_pages";
           $stmt  = $dbh->prepare($query);
-	  $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
-	  $stmt->bindValue('hashtag', $hashtag);
+	        $stmt->bindValue('first', $first_post, PDO::PARAM_INT);
+	        $stmt->bindValue('hashtag', $hashtag);
           $stmt->bindValue('num_pages', $num_per_page, PDO::PARAM_INT);
           $stmt->execute();
           $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -833,7 +831,6 @@ function SearchPostsByHashtags($dbh, $page_num, $hashtag) {
           if ($howmany < 1) {
               $result = 0;
 	  }
-	  echo json_encode($result);
     }
     catch (PDOException $e) {
         die('PDO error getting recent posts: ' . $e->getMessage());
@@ -853,7 +850,7 @@ function SearchPostsByTitle($dbh, $page_num, $title) {
                     "LEFT JOIN Posts_Text using (post_id)) " .
                     "LEFT JOIN Posts_Uploads using (post_id)) " .
                     "LEFT JOIN Uploads using (upload_id)) " .
-                    "WHERE Users.user_deleted = 0 AND Posts.post_title like CONCAT('%', :title , '%') " . 
+                    "WHERE Users.user_deleted = 0 AND Posts.post_title like CONCAT('%', :title , '%') " .
                     "ORDER BY post_timestamp DESC " .
                     "LIMIT :first,:num_pages";
           $stmt  = $dbh->prepare($query);
@@ -886,25 +883,22 @@ function SearchUsers($dbh, $username) {
 		if ($howmany < 1) {
 			$result = 0;
 		}
-          echo json_encode($result);
     }
     catch (PDOException $e) {
         die('PDO error getting recent posts: ' . $e->getMessage());
     }
     return $result;
 }
-
-
 function IsAdminUser($dbh, $user_id) {
 
         try {
-                $query = "SELECT count(*) " .
+                $query = "SELECT * " .
                          "FROM Admin_Users " .
                          "WHERE user_id = :uid";
-		$stmt  = $dbh->prepare($query);
-		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
+            		$stmt  = $dbh->prepare($query);
+            		$stmt->bindValue('uid', $user_id, PDO::PARAM_INT);
                 $stmt->execute();
-		$result  = $stmt->fetchAll(PDO::FETCH_OBJ);
+		            $result  = $stmt->fetchAll(PDO::FETCH_OBJ);
                 $howmany = count($result);
                 if ($howmany < 1) {
                         $result = 0;
@@ -919,6 +913,4 @@ function IsAdminUser($dbh, $user_id) {
     }
     return $result;
 }
-
-
 ?>

@@ -6,10 +6,12 @@ $dbh=ConnectDB();
 $user_id=$_COOKIE['user_id'];
 if($user_id<1 || $user_id == null){
   header("Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/registration.php");
+  die();
 }
 $userinfo=GetUserInfo($user_id, $dbh);
 $doggoinfo=GetDogInfo($user_id, $dbh);
-$doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
+$doggoPosts=GetRecentPosts(1, $user_id, $dbh);
+?>
 <html lang='en'>
 
 <head>
@@ -30,7 +32,6 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
         <div class='profile-info'>
             <div class='profile-name'>
                 <h2>
-          <!-- this content will change using php -->
           <?php echo ($userinfo[0]->username)?>
         </h2>
             </div>
@@ -41,76 +42,77 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
                 <div class='avatar-upload'>
                     <?php include 'avatar-upload.php';?>
                 </div>
-                <!--div class='bio-update'>
-          <?php// include 'bio-update-form.php'; ?>
-        </div-->
             </div>
             <div class='about-me'>
-                <div class='doggo-facts'>
+              <?php if(!isset($_GET['edit'])):?>
+              <div class='doggo-desc'>
+                <h5>Name:</h5>
+                <br/>
+                <h5>Breed:</h5>
+                <br/>
+                <h5>Weight:</h5>
+                <br/>
+                <h5>Bio:</h5>
+            </div>
+          <?php endif?>
+              <div class='doggo-facts'>
+                  <?php if(isset($_GET['edit'])):?>
                     <form id='bioform' name='bio-form' action='update-bio.php' method='post'>
                         <label for='name'>Name:</label>
-                        <input id='name' type='text' name='name' placeholder='Doggo name here!' value="<?php echo ($doggoinfo[0]->dog_name)?>"><br>
+                        <input id='name' type='text' name='name' placeholder='Doggo name here!' maxlength='30' value="<?php echo ($doggoinfo[0]->dog_name)?>"><br>
                         <label for='breed'>Breed:</label>
-                        <input id='breed' type='text' name='breed' placeholder='Dogge breed here!' value="<?php echo ($doggoinfo[0]->dog_breed)?>"><br/>
+                        <input id='breed' type='text' name='breed' placeholder='Dogge breed here!' maxlength='30' value="<?php echo ($doggoinfo[0]->dog_breed)?>"><br/>
                         <label for='weight'>Weight:</label>
-                        <input id='weight' type='text' name='weight' placeholder='Doggo weight hear!' value="<?php echo ($doggoinfo[0]->dog_weight)?>"><br/>
+                        <input id='weight' type='text' name='weight' placeholder='Doggo weight hear!' maxlength='4' value="<?php echo ($doggoinfo[0]->dog_weight)?>"> lbs<br/>
                         <label for='bio'>Bio:</label>
-                        <textarea id='bio' type='text' name='bio' placeholder='Doggo bio here!' form='bioform' ><?php echo ($doggoinfo[0]->dog_bio)?></textarea><br/>
+                        <textarea id='bio' type='text' name='bio' placeholder='Doggo bio here!' form='bioform' maxlength='256'><?php echo ($doggoinfo[0]->dog_bio)?></textarea><br/>
                         <input type='submit' value='Update bio!'>
                     </form>
+                  <?php endif ?>
+                  <?php if(!isset($_GET['edit'])):?>
+                  <h5><?php echo ($doggoinfo[0]->dog_name)?></h5>
+                  <br/>
+                  <h5><?php echo ($doggoinfo[0]->dog_breed)?></h5>
+                  <br/>
+                  <h5><?php echo ($doggoinfo[0]->dog_weight)?> lbs</h5>
+                  <br/>
+                  <h5><?php echo ($doggoinfo[0]->dog_bio)?></h5>
+                <?php endif?>
                 </div>
-                <!--
-          <div class='doggo-desc'>
-            <h5>Name:</h5>
-            <br/>
-            <h5>Breed:</h5>
-            <br/>
-            <h5>Weight:</h5>
-            <br/>
-            <h5>Bio:</h5>
-        </div>
-        <div class='doggo-facts'>
-            <h5><?php// echo ($doggoinfo[0]->dog_name)?></h5>
-            <br/>
-            <h5><?php //echo ($doggoinfo[0]->dog_breed)?></h5>
-            <br/>
-            <h5><?php //echo ($doggoinfo[0]->dog_weight)?></h5>
-            <br/>
-            <h5><?php //echo ($doggoinfo[0]->dog_bio)?></h5>
-        </div>
-      -->
+
+
             </div>
+            <?php  if(!isset($_GET['edit'])):?>
+            <form action="profile.php?edit=1" >
+              <input type="submit" value="Edit" name='edit'/>
+            </form>
+          <?php endif ?>
         </div>
         <div class='post-feed'>
           <a href='./ui-create-post.php'>Create a post here!</a>
-            <?php // if a doggo hasn 't made any posts, display this
+            <?php // if a doggo hasn't made any posts, display this
         if($doggoPosts == 0){
           echo "Nothing to see here. Go out there and bark!";
         }
-
         foreach($doggoPosts as &$post):?>
         <div class='post '>
           <div class='post-left '>
             <div class='post-header '>
                 <h2 class='post-title '>
-                  <!-- this content will change using php -->
                   <?php echo ($post->post_title) ?>
                </h2>
                 <h4 class='post-poster '>
-                  <!-- this content will change using php -->
                   by <a href='./user.php?username=<?php echo ($post->username) ?>'><?php echo ($post->username) ?> </a>
+                  on <?php echo ($post->post_timestamp) ?>
                </h4>
             </div>
-
             <?php if($post->file_path): // link to posts with no image?>
             <div class='post-image'>
-                <!-- this content will change using php -->
               <a href='post.php?post_id=<?php echo ($post->post_id) ?>'>  <img src='<?php echo ($post->file_path) ?>'></img></a>
             </div>
           <?php else: ?>
             <a href='post.php?post_id=<?php echo ($post->post_id) ?>'>
             <div class='post-image'>
-                <!-- this content will change using php -->
             </div>
             </a>
           <?php endif; ?>
@@ -124,12 +126,17 @@ $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
         </div>
         <div class='post-voting'>
             <div class='post-upvote'>
-                <img src='images/like-paw.png'></img>
+                <a href='vote.php?vote=1&post_id=<?php echo $post->post_id?>'><img src='images/like-paw.png'></img></a>
             </div>
             <div class='post-downvote'>
-                <img src='images/dislike-paw.png'></img>
+                <a href='vote.php?vote=-1&post_id=<?php echo $post->post_id?>'><img src='images/dislike-paw.png'></img></a>
             </div>
         </div>
+        <div>
+        <h4>
+          Popularity: <?php echo $post->post_votes;?>
+        </h4>
+      </div>
     </div>
     </div>
     <?php endforeach;?>

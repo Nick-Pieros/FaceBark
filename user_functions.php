@@ -10,7 +10,6 @@ function RegisterUser($username, $email, $pass, $f_name, $l_name, $dbh)
 	try {
 		$key = sha1($username . $email . "salt");
 		$pass = sha1("salt" . $pass);
-		echo "pass: $pass </br>";
 		$query = "CALL RegisterUser(:uname, :pass, :email, :f_name, :l_name, :key)";
 
                 $stmt = $dbh->prepare($query);
@@ -47,8 +46,8 @@ function LoginUser($username, $pass, $dbh)
 {
 	try {
 		$pass = sha1("salt" . $pass);
-		$query = "SELECT user_id " . 
-			"FROM Users " . 
+		$query = "SELECT user_id " .
+			"FROM Users " .
 			"WHERE (username = :username AND password = :password AND user_deleted = 0)";
 		$stmt  = $dbh->prepare($query);
 		// copy $_POST variable to local variable, Just In Case
@@ -62,7 +61,7 @@ function LoginUser($username, $pass, $dbh)
 		$howmany       = count($result);
 		$curr_user     = $result[0];
 		if ($howmany == 0) {
-			
+
 			$query = "SELECT tmp_user_id " .
                         	  "FROM Tmp_Users " .
                         	  "WHERE (tmp_username = :username AND tmp_password = :password)";
@@ -197,7 +196,7 @@ function SendValidationEmail($dbh, $tmp_user_id) {
 				{
 					$host = "elvis.rowan.edu";
 					$site = "FaceBark";
-				        $confirmsite = "/~pierosn0/awp/FaceBark/confirmation.php?key=";
+				        $confirmsite = "/~blackc6/awp/FaceBark/confirmation.php?key=";
 				        $myemail = "pierosn0@elvis.rowan.edu";
 
 				        $subject = "$site: Verify Your Account!";
@@ -207,7 +206,7 @@ function SendValidationEmail($dbh, $tmp_user_id) {
 					$message = "Hi $username, welcome to $site! \r\n\r\n" .
 						   "To confirm your username, please click this link:\r\n\r\n".
 						   "http://$host$confirmsite$key \r\n" .
-						   "(If you did not register at $site, \r\n" .
+						   "(If you did not register at $site, " .
 						   "just ignore this message.)\r\n";
 					mail($email, $subject, $message, $headers);
 					$query = "UPDATE Tmp_Users " .
@@ -282,7 +281,7 @@ function SendResetPasswordEmail($dbh, $user_id)	{
                         {
                                 $host = "elvis.rowan.edu";
                                 $site = "FaceBark";
-                                $confirmsite = "/~pierosn0/awp/FaceBark/reset-pass.php?key=";
+                                $confirmsite = "/~blackc6/awp/FaceBark/reset-pass.php?key=";
                                 $myemail = "pierosn0@elvis.rowan.edu";
                                 $subject = "$site: Password Reset!";
                                 $headers = "From: $myemail \r\n" .
@@ -291,7 +290,7 @@ function SendResetPasswordEmail($dbh, $user_id)	{
                                 $message = "Hi $username, we heard you wanted to change your password! \r\n\r\n" .
                                            "To do so, please click this link:\r\n\r\n".
                                            "http://$host$confirmsite$key \r\n" .
-					   "(If you did not request this email please consider changing your password \r\n" .
+					   "(If you did not request this email please consider changing your password " .
 					   "as your account may be under attack ) \r\n";
                                 mail($email, $subject, $message, $headers);
 
@@ -303,13 +302,13 @@ function SendResetPasswordEmail($dbh, $user_id)	{
 				$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
 				$stmt->bindParam(':key', $key);
 				$stmt->execute();
-				//it worked!			
+				//it worked!
 				$result = 1;
 
                         }
 
 		}
-		
+
 		$query = "UPDATE User_Keys " .
                          "SET num_attempts = 0 ".
                          "WHERE last_attempt <= SUBTIME(CURRENT_TIMESTAMP, '24:00:00')";
@@ -331,7 +330,7 @@ function ResetPassword($dbh, $new_pass, $key) {
 
 	try {
 		$new_pass = sha1("salt" . $new_pass);
-		
+
 		$query = "UPDATE Users  " .
 			"SET password = :new_pass " .
 			"WHERE user_deleted = 0 AND user_id = (SELECT user_id " .
@@ -344,14 +343,14 @@ function ResetPassword($dbh, $new_pass, $key) {
 		$result = $stmt->rowCount();
 		if($result > 0)
 		{
-	
+
 
 			$query = "SELECT user_id " .
 				 "FROM User_Keys " .
 				 "WHERE user_key = :key";
 			$stmt = $dbh->prepare($query);
 		        $stmt->bindParam(':key', $key);
-			
+
         	        $stmt->execute();
 
 
@@ -366,7 +365,7 @@ function ResetPassword($dbh, $new_pass, $key) {
 	                        $result = $result[0];
 	                        $result = $result->user_id;
 			}
-			
+
 		}
 	}
 	catch (PDOException $e) {
@@ -393,16 +392,16 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 				$user_id = $user_list[$i];
 				$type = $type_list[$i];
 				$link = $link_list[$i];
-				
+
                 		$query = "SELECT username, email " .
                 		        "FROM Users " .
                 		        "WHERE user_id = :uid AND user_deleted = 0";
 
                 		$stmt = $dbh->prepare($query);
-		
+
 		                $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
 		                $stmt->execute();
-		
+
 		                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
 		                $howmany = count($result);
 		                if($howmany == 0)
@@ -427,11 +426,11 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 		                                   "http://$link \r\n";
 					$result = 1;
 					mail($email, $subject, $message, $headers);
-		
+
 				}
 			}
 		}
-	
+
 	}
 	catch (PDOException $e) {
 		$result = 0;
@@ -441,4 +440,3 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 }
 
 ?>
-

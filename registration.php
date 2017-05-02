@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-require_once ("functions.php");
+require_once ("user_functions.php");
 require_once ("connect.php");
 $dbh = ConnectDB();
 setcookie ("user_id", "", 1);
@@ -27,7 +27,7 @@ unset($_COOKIE['user_id']);
                  if(dd<10) {dd='0'+dd}
                  if(mm<10) {mm='0'+mm}
                  today = mm+'/'+dd+'/'+yyyy;
-                   $('.date').text(today)
+                   $('.date').text(today);
                 }
                 window.onload = getDate;
       </script>
@@ -38,13 +38,7 @@ unset($_COOKIE['user_id']);
             <div class='date'></div>
             <div class='login'>
                <?php
-                //if check cookie and user is signed in do this, else include signin.php
-                if(isset($_COOKIE['user_id'])){
-                  echo '<h3> Welcome, ' . $_COOKIE['user_id'] . '! </h3>';
-                  print_r($_COOKIE);
-                } else {
                   include 'signin.php';
-                }
                 ?>
             </div>
          </div>
@@ -109,25 +103,31 @@ unset($_COOKIE['user_id']);
                   if (empty($_POST["password"])) {
                       $passwordErr = "*Password is required";
                   } else {
-                    if (empty($_POST["confpassword"])) {
-                        $confPasswordErr = "*Confirm password";
+                    //http://stackoverflow.com/questions/11873990/create-preg-match-for-password-validation-allowing
+                    if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,24}$/', $_POST['password'])) {
+                      $passwordErr = "*Required: 1 number, 1 letter, between 8-24 characters";
                     } else {
-                      if ($_POST["password"] == $_POST["confpassword"]){ // if passwords match, set password
-                        $password = $_POST["password"];
-                      } else{
-                        $confPasswordErr = "*Passwords do not match!";
+                      if (empty($_POST["confpassword"])) {
+                          $confPasswordErr = "*Confirm password";
+                      } else {
+                        if ($_POST["password"] == $_POST["confpassword"]){ // if passwords match, set password
+                          $password = $_POST["password"];
+                        } else{
+                          $confPasswordErr = "*Passwords do not match!";
+                        }
+                        // else send error message
                       }
-                      // else send error message
                     }
                   }
                   if(($password != "") && ($username != "") && ($email != "") && ($f_name != "") && ($l_name != "")){
                    // $password = password_hash($password, PASSWORD_DEFAULT);
                    $user_id = RegisterUser($username, $email, $password, $f_name, $l_name, $dbh);
-                   setcookie("user_id", $user_id);
+                   setcookie("tmp_user_id", $user_id);
                    if(!($user_id > 1)){
                      $userExistsErr = "<span class='error'> User already exists, please log in! </span>";
                    } else {
                      header("Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/verify-user.php");
+                     die();
                    }
                  }
                }
@@ -141,10 +141,10 @@ unset($_COOKIE['user_id']);
                ?>
                <h1>Sign up for free!</h1>
                <form name='myForm' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='post' >
-                  <input id='username' type='text' name='username' placeholder='Username' value="<?php echo $_POST['username']?>"> <span class='error'><?php echo $unameErr?></span> <br/>
-                  <input id='email' type='text' name='email' placeholder='Email' value="<?php echo $_POST['email']?>"> <span class='error'><?php echo $emailErr?></span><br/>
-                  <input id='f_name' type='text' name='f_name' placeholder='First Name' value="<?php echo $_POST['f_name']?>"> <span class='error'><?php echo $fnameErr?></span><br/>
-                  <input id='l_name' type='text' name='l_name' placeholder='Last Name' value="<?php echo $_POST['l_name']?>"> <span class='error'><?php echo $lnameErr?></span><br/>
+                  <input id='username' type='text' name='username' placeholder='Username' maxlength='30' value="<?php echo $_POST['username']?>"> <span class='error'><?php echo $unameErr?></span> <br/>
+                  <input id='email' type='text' name='email' placeholder='Email' maxlength='256' value="<?php echo $_POST['email']?>"> <span class='error'><?php echo $emailErr?></span><br/>
+                  <input id='f_name' type='text' name='f_name' placeholder='First Name' maxlength='35' value="<?php echo $_POST['f_name']?>"> <span class='error'><?php echo $fnameErr?></span><br/>
+                  <input id='l_name' type='text' name='l_name' placeholder='Last Name' maxlength='35'value="<?php echo $_POST['l_name']?>"> <span class='error'><?php echo $lnameErr?></span><br/>
                   <input id='password' type='password' name='password' placeholder='Password'> <span class='error'><?php echo $passwordErr?></span><br/>
                   <input id='confirm-password' type='password' name='confpassword' placeholder='Confirm Password'> <span class='error'><?php echo $confPasswordErr?></span><br/>
                   <input type='submit' value='Sign Up!' class='green-btn'>
@@ -153,8 +153,8 @@ unset($_COOKIE['user_id']);
             </div>
             <div class='forgotpass'>
                <h1>Forgot password?</h1>
-               <form action=''>
-                  <input type='text' name='email' placeholder='Email'><br>
+               <form action='reset-pass-request.php' method='get'>
+                  <input type='text' name='username' placeholder='Username'><br>
                   <input type='submit' value='Reset Password!' class='green-btn' >
                </form>
             </div>

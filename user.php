@@ -5,7 +5,13 @@ require_once ("connect.php");
 $dbh=ConnectDB();
 $username=$_GET['username'];
 //will work on this
+
 $user_id=GetUserByUsername($dbh, $username);
+
+if($user_id== 0){
+  header('Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/page-not-found.php');
+  die();
+}
 $userinfo=GetUserInfo($user_id,$dbh);
 $doggoinfo=GetDogInfo($user_id, $dbh);
 $doggoPosts=GetRecentPosts(1, $user_id, $dbh); ?>
