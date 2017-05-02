@@ -150,13 +150,17 @@ if ( isset($_POST['username'] ) ) {
 //	echo json_encode($tmp);
 //	$tmp = DeletePostText($dbh, 24, 3);
 //	echo "</br>";
-//	echo $tmp;
-	$users = array("nicktester", "deacide");
+	//	echo $tmp;
+	//
+	/*
+	$users = array("ktester", "deacide");
         $types = array("post", "comment");
 	$links = array("https://google.com", "google.com");	
 	$tmp = SendNotification($dbh, $users, $types, $links);	
 	echo "</br>$tmp";
-
+	 */
+	$tmp = DeleteComment($dbh, 134, 147, 322);
+	echo $tmp;
 	//echo json_encode($tmp);
 /*	
 	$tmp = VoteOnPost($dbh, 214,2, -1000);

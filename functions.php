@@ -872,7 +872,7 @@ function SearchPostsByTitle($dbh, $page_num, $title) {
 
 function SearchUsers($dbh, $username) {
 	try {
-		$query = "SELECT user_id, username " .
+		$query = "SELECT username " .
 			 "FROM Users " .
 			 "WHERE user_deleted = 0 AND user_id > 1 AND username like CONCAT('%', :username, '%')";
 		$stmt  = $dbh->prepare($query);
