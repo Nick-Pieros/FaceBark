@@ -1,0 +1,415 @@
+ CREATE TABLE `Admin_Users` (
+  `user_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `Admin_Users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+);
+
+CREATE TABLE `Comments` (
+  `comment_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `comment_text` varchar(900) NOT NULL,
+  `comment_timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `comment_votes` smallint(6) DEFAULT '0',
+  `user_id` mediumint(9) NOT NULL,
+  `post_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`comment_id`),
+  UNIQUE KEY `comment_id` (`comment_id`),
+  KEY `user_id` (`user_id`),
+  KEY `Comments_ibfk_2` (`post_id`),
+  CONSTRAINT `Comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`),
+  CONSTRAINT `Comments_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `Posts` (`post_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `Comments_Hashtags` (
+  `comment_id` mediumint(9) NOT NULL,
+  `hashtag_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`comment_id`,`hashtag_id`),
+  KEY `hashtag_id` (`hashtag_id`),
+  CONSTRAINT `Comments_Hashtags_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `Comments` (`comment_id`) ON DELETE CASCADE,
+  CONSTRAINT `Comments_Hashtags_ibfk_2` FOREIGN KEY (`hashtag_id`) REFERENCES `Hashtags` (`hashtag_id`)
+);
+
+CREATE TABLE `Dogs` (
+  `dog_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `dog_name` varchar(30) NOT NULL,
+  `dog_breed` varchar(30) NOT NULL,
+  `dog_weight` mediumint(9) DEFAULT '0',
+  `dog_bio` varchar(256) NOT NULL,
+  `user_id` mediumint(9) NOT NULL,
+  `upload_id` mediumint(9) DEFAULT '1',
+  PRIMARY KEY (`dog_id`),
+  UNIQUE KEY `dog_id` (`dog_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  KEY `upload_id` (`upload_id`),
+  CONSTRAINT `Dogs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `Dogs_ibfk_2` FOREIGN KEY (`upload_id`) REFERENCES `Uploads` (`upload_id`)
+) ;
+
+CREATE TABLE `Hashtags` (
+  `hashtag_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `hashtag_text` varchar(128) NOT NULL,
+  PRIMARY KEY (`hashtag_id`),
+  UNIQUE KEY `hashtag_id` (`hashtag_id`),
+  UNIQUE KEY `hashtag_text` (`hashtag_text`)
+) ;
+
+CREATE TABLE `Posts` (
+  `post_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `post_title` varchar(192) NOT NULL,
+  `post_timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` mediumint(9) NOT NULL,
+  `post_votes` smallint(6) DEFAULT '0',
+  PRIMARY KEY (`post_id`),
+  UNIQUE KEY `post_id` (`post_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `Posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+);
+
+CREATE TABLE `Posts_Hashtags` (
+  `post_id` mediumint(9) NOT NULL,
+  `hashtag_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`post_id`,`hashtag_id`),
+  KEY `hashtag_id` (`hashtag_id`),
+  CONSTRAINT `Posts_Hashtags_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `Posts` (`post_id`) ON DELETE CASCADE,
+  CONSTRAINT `Posts_Hashtags_ibfk_2` FOREIGN KEY (`hashtag_id`) REFERENCES `Hashtags` (`hashtag_id`)
+);
+
+CREATE TABLE `Posts_Text` (
+  `post_id` mediumint(9) NOT NULL,
+  `post_text` varchar(2048) NOT NULL,
+  PRIMARY KEY (`post_id`),
+  UNIQUE KEY `post_id` (`post_id`),
+  CONSTRAINT `Posts_text_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `Posts` (`post_id`) ON DELETE CASCADE
+) ;
+
+ CREATE TABLE `Posts_Uploads` (
+  `post_id` mediumint(9) NOT NULL,
+  `upload_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`post_id`),
+  UNIQUE KEY `post_id` (`post_id`),
+  UNIQUE KEY `upload_id` (`upload_id`),
+  CONSTRAINT `Posts_Uploads_ibfk_1` FOREIGN KEY (`upload_id`) REFERENCES `Uploads` (`upload_id`),
+  CONSTRAINT `Posts_Uploads_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `Posts` (`post_id`) ON DELETE CASCADE
+);
+
+ CREATE TABLE `Tmp_Users` (
+  `tmp_user_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `tmp_username` varchar(30) NOT NULL,
+  `tmp_password` varchar(512) NOT NULL,
+  `tmp_email` varchar(256) NOT NULL,
+  `tmp_f_name` varchar(35) NOT NULL,
+  `tmp_l_name` varchar(35) NOT NULL,
+  `last_validation_attempt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `num_validation_attempts` tinyint(4) DEFAULT '0',
+  `tmp_user_key` varchar(45) NOT NULL,
+  PRIMARY KEY (`tmp_user_id`),
+  UNIQUE KEY `tmp_user_id` (`tmp_user_id`),
+  UNIQUE KEY `tmp_username` (`tmp_username`),
+  UNIQUE KEY `tmp_email` (`tmp_email`)
+);
+
+ CREATE TABLE `Uploads` (
+  `upload_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `file_name` varchar(25) NOT NULL,
+  `file_path` varchar(128) NOT NULL,
+  `file_type` varchar(5) NOT NULL,
+  `user_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`upload_id`),
+  UNIQUE KEY `upload_id` (`upload_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `Uploads_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+);
+
+CREATE TABLE `User_Keys` (
+  `user_id` mediumint(9) NOT NULL,
+  `user_key` varchar(45) NOT NULL,
+  `num_attempts` tinyint(4) DEFAULT '0',
+  `last_attempt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `User_Keys_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+);
+
+CREATE TABLE `Users` (
+  `user_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `username` varchar(30) NOT NULL,
+  `password` varchar(512) NOT NULL,
+  `email` varchar(256) NOT NULL,
+  `f_name` varchar(35) NOT NULL,
+  `l_name` varchar(35) NOT NULL,
+  `user_deleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
+);
+
+ CREATE TABLE `Voted_Posts` (
+  `user_id` mediumint(9) NOT NULL,
+  `post_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`user_id`,`post_id`),
+  KEY `Voted_Posts_ibfk_1` (`post_id`),
+  CONSTRAINT `Voted_Posts_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `Posts` (`post_id`) ON DELETE CASCADE,
+  CONSTRAINT `Voted_Posts_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+);
+
+
+DELIMITER $$
+CREATE  PROCEDURE `CreateComment`(IN pid MEDIUMINT(9), IN uid MEDIUMINT(9), IN comment VARCHAR(900))
+BEGIN
+
+DECLARE new_comment_id MEDIUMINT;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SET new_comment_id = 0;
+SELECT new_comment_id;
+END;
+
+START TRANSACTION;
+
+INSERT INTO Comments(comment_text, user_id, post_id)
+VALUES(comment, uid, pid);
+
+SET new_comment_id = LAST_INSERT_ID();
+
+COMMIT;
+
+SELECT new_comment_id;
+
+END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE  PROCEDURE `CreateHashtag`(IN hashtag VARCHAR(128), IN pid MEDIUMINT(9), IN cid MEDIUMINT(9))
+BEGIN
+
+DECLARE hash_id MEDIUMINT;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SET hash_id = 0;
+SELECT hash_id;
+END;
+
+
+START TRANSACTION;
+
+SET hash_id = (SELECT hashtag_id FROM Hashtags WHERE hashtag_text LIKE hashtag);
+
+IF (hash_id IS NULL) THEN
+INSERT INTO Hashtags(hashtag_text)
+VALUES(hashtag);
+SET hash_id = LAST_INSERT_ID();
+END IF;
+
+IF (pid != 0) THEN
+INSERT INTO Posts_Hashtags(post_id, hashtag_id)
+VALUES(pid, hash_id);
+END IF;
+
+IF (cid != 0) THEN
+INSERT INTO Comments_Hashtags(comment_id, hashtag_id)
+VALUES (cid, hash_id);
+END IF;
+COMMIT;
+SELECT hash_id;
+END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE `CreatePost`(IN uid MEDIUMINT, IN title VARCHAR(192), IN text VARCHAR(2048), IN upid MEDIUMINT)
+BEGIN
+DECLARE new_post_id MEDIUMINT;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SET new_post_id = 0;
+SELECT new_post_id;
+END;
+
+START TRANSACTION;
+
+
+INSERT INTO Posts (post_title, user_id)
+VALUES (title, uid);
+
+SET new_post_id = LAST_INSERT_ID();
+
+IF (text IS NOT NULL) THEN
+INSERT INTO Posts_Text(post_id, post_text)
+VALUES(new_post_id, text);
+END IF;
+
+IF (upid IS NOT NULL) THEN
+INSERT INTO Posts_Uploads(post_id, upload_id)
+VALUES(new_post_id, upid);
+END IF;
+COMMIT;
+
+SELECT new_post_id;
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE  PROCEDURE `DeleteUser`(IN uid MEDIUMINT, IN admin MEDIUMINT)
+BEGIN
+
+DECLARE isadmin TINYINT;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SELECT 0 as 'uid';
+END;
+
+START TRANSACTION;
+SET isadmin = (SELECT count(*) from Admin_Users WHERE user_id = admin);
+IF (admin != 0 AND isadmin != 1) THEN
+ROLLBACK;
+SELECT 0 as 'uid';
+
+ELSE
+UPDATE Users
+SET user_deleted = 1
+WHERE user_id = uid;
+
+IF (ROW_COUNT() = 0) THEN
+ROLLBACK;
+SELECT 0 as 'uid';
+ELSE
+DELETE FROM Dogs
+WHERE user_id = uid;
+
+UPDATE Uploads
+SET user_id = 1
+WHERE user_id = uid;
+
+UPDATE Comments
+SET user_id = 1, comment_text = '[deleted]'
+WHERE user_id = uid;
+
+DELETE FROM Posts
+WHERE user_id = uid;
+
+DELETE FROM Voted_Posts
+WHERE user_id = uid;
+
+SELECT uid;
+COMMIT;
+END IF;
+END IF;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE `RegisterUser`(IN uname VARCHAR(30), IN pass VARCHAR(512), IN e_mail VARCHAR(256), IN f_name VARCHAR(35), IN l_name VARCHAR(35), IN tmp_key VARCHAR(40))
+BEGIN
+
+DECLARE num_users TINYINT;
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SELECT 0 as 'uid';
+END;
+
+DELETE FROM Tmp_Users
+WHERE last_validation_attempt <= SUBTIME(CURRENT_TIMESTAMP, '24:00:00');
+
+
+START TRANSACTION;
+
+SET num_users = (SELECT count(*) FROM Users where username = uname OR email = e_mail);
+
+IF (num_users > 0) THEN
+ROLLBACK;
+SELECT 0 as 'uid';
+ELSE
+INSERT INTO Tmp_Users(tmp_username, tmp_password, tmp_email, tmp_f_name, tmp_l_name, tmp_user_key)
+VALUES(uname, pass, e_mail, f_name, l_name, tmp_key);
+SELECT LAST_INSERT_ID() as uid;
+
+COMMIT;
+
+DELETE FROM Tmp_Users
+WHERE last_validation_attempt <= SUBTIME(CURRENT_TIMESTAMP, '24:00:00');
+END IF;
+
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE  PROCEDURE `ValidateUser`(IN tmp_key VARCHAR(45))
+BEGIN
+
+DECLARE uid MEDIUMINT;
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SELECT 0 as 'uid';
+END;
+
+DELETE FROM Tmp_Users
+WHERE last_validation_attempt <= SUBTIME(CURRENT_TIMESTAMP, '24:00:00');
+
+START TRANSACTION;
+
+INSERT INTO Users(username, password, email, f_name, l_name)
+SELECT tmp_username, tmp_password, tmp_email, tmp_f_name, tmp_l_name
+FROM Tmp_Users
+WHERE tmp_user_key = tmp_key;
+
+SET uid = LAST_INSERT_ID();
+
+IF (uid != 0) THEN
+INSERT INTO User_Keys(user_id, user_key)
+VALUES (uid, tmp_key);
+
+DELETE FROM Tmp_Users
+WHERE tmp_user_key = tmp_key;
+ELSE
+ROLLBACK;
+SELECT 0 as 'uid';
+END IF;
+COMMIT;
+SELECT uid;
+
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE  PROCEDURE `VoteOnPost`(IN user MEDIUMINT(9), IN post MEDIUMINT(9), IN vote TINYINT)
+BEGIN
+
+DECLARE was_success TINYINT;
+
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SET was_success = 0;
+SELECT was_success;
+END;
+
+INSERT INTO Voted_Posts(user_id, post_id)
+VALUES (user, post);
+
+UPDATE Posts
+SET post_votes = post_votes + vote
+WHERE post_id = post;
+
+SET was_success = 1;
+SELECT was_success;
+
+END $$
+DELIMITER ;
