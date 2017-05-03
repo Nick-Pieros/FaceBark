@@ -530,7 +530,7 @@ function CreateHashtag($dbh, $hashtag, $post_id, $comment_id) {
 
 }
 
-function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
+function CreateComment($dbh, $post_id, $user_id, $comment) {
 
         try {
                 $query = "CALL CreateComment(:pid, :uid, :comment)";
