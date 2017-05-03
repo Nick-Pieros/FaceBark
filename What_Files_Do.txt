@@ -1,0 +1,32 @@
+Files:
+avatar-update.php - calls necessary functions to retrieve, upload, and update the dog's avatar picture
+avatar-upload.php - prompts user for image file to upload to change the avatar on the user's profile
+confirmation.php - confirms emails using links sent to the users email
+connect.php - connect to MySQL and select webuser database
+create-comment.php - creates a comment on a post
+create-post.php - creates a post; posts must have an upload and a title however, captions are optional
+delete-comment.php - calls function that replaces comment data with [deleted]
+delete-post.php - calls function that replaces comment data with [deleted]
+functions.php - NICK INSERT HERE
+gallery.php - displays a quick view of the most recent posts, 8 per page
+header.php - provides php pages with navigation and search; to be #included
+page-not-found.php - universal 404
+post.php - single detailed page view of a post; consists of title, comments, photo upload, captions, and popularity
+profile.php - main profile page of the user
+registration.php - front page of the website, allows users to register, log in, and request a password reset
+reset-pass-request.php - php that calles the function to send the initial password reset email
+reset-pass.php - php that displays the password and confirmation password after clicking the link to reset your password
+search.php - php that displays the password and confirmation password after clicking the link to reset your password
+signin.php - provides the display for signing in a user
+ui-create-post.php - php used to select the upload and see what your post would look like once uploaded
+update-bio.php - php used to change your dog's info
+upload2.php - does the actualy moving and uploading of files
+user.php - when provided with a user name, will bring the user to their page
+user_functions.php - NICK INSERT HERE
+verify-user.php - php that attempts to send out email verification emails, and returns different messages depending on the success, or reason of failure
+vote.php - allows a user to upvote or downvote a post and affect it's popularity
+
+Folders:
+css - contains all of Facebark's CSS
+images - all of the stock images used in Facebark which are not uploaded by the user
+uploads - all uploaded files from users
