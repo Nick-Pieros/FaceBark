@@ -381,10 +381,6 @@ function ResetPassword($dbh, $new_pass, $key) {
 function SendNotification($dbh, $user_list, $type, $link) {
 	try {
 		$size = count($user_list);
-		if($size != count($type_list) || $size != count($link_list))
-		{
-			$result = -1;
-		}
 		else
 		{
 			for($i =0; $i<$size; $i++)
