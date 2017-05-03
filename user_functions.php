@@ -381,8 +381,6 @@ function ResetPassword($dbh, $new_pass, $key) {
 function SendNotification($dbh, $user_list, $type, $link) {
 	try {
 		$size = count($user_list);
-		else
-		{
 			for($i =0; $i<$size; $i++)
 			{
 				$username = $user_list[$i];
@@ -422,7 +420,6 @@ function SendNotification($dbh, $user_list, $type, $link) {
 
 				}
 			}
-		}
 
 	}
 	catch (PDOException $e) {
