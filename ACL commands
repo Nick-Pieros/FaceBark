@@ -1,0 +1,15 @@
+in your public_html folder do the following:
+
+for each file (user_functions.php, connection.php):
+
+chmod 700 <file>
+setfacl -m mask:rwx <file>
+setfacl -m user:blackc6:rwx <file>
+setfacl -m user:carlind0:rwx <file>
+setfacl -m user:pierosn0:rwx <file>
+setfacl -m user:kilroy:rwx <file>
+setfacl -m user:apache:rwx <file>
+
+chmod 664 <file>
+
+test to make sure that everything still works
