@@ -789,7 +789,7 @@ function CreateComment($dbh, $post_id, $user_id, $comment) {
         $stmt = $dbh->prepare($query);
         $stmt->bindParam(':comment', $comment);
         $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
-        stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
         $stmt->execute();
 
         $result = $stmt->fetchAll(PDO::FETCH_OBJ);
