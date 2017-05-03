@@ -533,14 +533,13 @@ function CreateHashtag($dbh, $hashtag, $post_id, $comment_id) {
 function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
 
         try {
-                $query = "CALL CreateComment(:pid, :uid, :comment, :parent_id)";
+                $query = "CALL CreateComment(:pid, :uid, :comment)";
 
                 $stmt = $dbh->prepare($query);
 
                 $stmt->bindParam(':comment', $comment);
                 $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
 		$stmt->bindParam(':uid', $user_id, PDO::PARAM_INT);
-		$stmt->bindParam(':parent_id', $parent_comment_id, PDO::PARAM_INT);
                 $stmt->execute();
 
                 $result = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -563,38 +562,6 @@ function CreateComment($dbh, $post_id, $user_id, $comment, $parent_comment_id) {
         return $result;
 
 }
-
-function GetTopLevelComments($dbh, $post_id) {
-
-	 try {
-		 $query = "SELECT comment_id, comment_text, comment_timestamp, comment_votes, username " .
-                         "FROM Comments LEFT JOIN Users using(user_id) " .
-			 "WHERE post_id = :pid AND comment_id NOT IN ".
-			 "(SELECT child_comment_id " .
-			 "FROM Comment_Children) " .
-			 "ORDER BY comment_timestamp ASC";
-
-                $stmt = $dbh->prepare($query);
-
-                $stmt->bindParam(':pid', $post_id, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-                $howmany = count($result);
-                if($howmany == 0)
-                {
-                        $result = 0;
-		}
-        }
-        catch (PDOException $e) {
-                $result = 0;
-                die('PDO error fetching top level comments: ' . $e->getMessage());
-        }
-        return $result;
-
-}
-
-
 function GetAllComments($dbh, $post_id) {
 
 	try {
