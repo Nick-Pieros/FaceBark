@@ -874,7 +874,8 @@ function SearchUsers($dbh, $username) {
 	try {
 		$query = "SELECT username " .
 			 "FROM Users " .
-			 "WHERE user_deleted = 0 AND user_id > 1 AND username like CONCAT('%', :username, '%')";
+			 "WHERE user_deleted = 0 AND user_id > 1 AND username like CONCAT('%', :username, '%') " .
+			 "ORDER BY username ASC ";
 		$stmt  = $dbh->prepare($query);
 		$stmt->bindValue('username', $username);
 		$stmt->execute();
