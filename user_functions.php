@@ -378,7 +378,7 @@ function ResetPassword($dbh, $new_pass, $key) {
 
 //type is either comment or post
 //link is the link to the post/comment
-function SendNotification($dbh, $user_list, $type_list, $link_list) {
+function SendNotification($dbh, $user_list, $type_list, $link) {
 	try {
 		$size = count($user_list);
 		if($size != count($type_list) || $size != count($link_list))
@@ -391,7 +391,6 @@ function SendNotification($dbh, $user_list, $type_list, $link_list) {
 			{
 				$username = $user_list[$i];
 				$type = $type_list[$i];
-				$link = $link_list[$i];
 
                 		$query = "SELECT email " .
                 		        "FROM Users " .
