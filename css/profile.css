@@ -1,87 +1,103 @@
-.content{
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 50px;
+/*
+*   profile.css -- CSS for user profile page
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
+.content {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
 }
-.profile-info{
-  color:black;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background-color: white;
-  border:2px solid black;
-  margin-bottom: 50px;
+.profile-info {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: white;
+    border: 2px solid black;
+    margin-bottom: 50px;
 }
-.profile-name{
-  width:100%;
+.profile-name {
+    width: 100%;
 }
-.profile-pic{
-  display: flex;
-  justify-content: center;
-  padding-top: .5em;
-  padding-bottom: .5em;
-  background-color: white;
-  width:100%;
+.profile-pic {
+    display: flex;
+    justify-content: center;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    background-color: white;
+    width: 100%;
 }
-.profile-pic img{
-  width:95%;
-  height:100%;
+.profile-pic img {
+    width: 95%;
+    height: 100%;
 }
-.about-me{
-  display: flex;
-  flex-direction: row;
-  width:100%;
-  background-color:white;
-  z-index:2;
-  font-size: 20pt;
+.about-me {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: white;
+    z-index: 2;
+    font-size: 20pt;
 }
-.doggo-desc{
-  padding-left: 1px;
+.doggo-desc {
+    padding-left: 1px;
 }
-.doggo-facts h5{
-  font-weight: normal;
-  padding-right:1px;
-  width:100%;
+.doggo-facts h5 {
+    font-weight: normal;
+    padding-right: 1px;
+    width: 100%;
 }
-.post-feed{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /*background-color: #7BB0EC;*/
-  padding:0 1em 0 1em;
-  min-width:756px;
+.post-feed {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1em 0 1em;
+    min-width: 756px;
 }
-.post{
-  width:40em;
-  display: flex;
-  flex-direction:column;
-  overflow:hidden;
+.post {
+    width: 40em;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
-.post-image{
-  overflow:hidden;
-  height:300px;
+.post-image {
+    overflow: hidden;
+    height: 300px;
 }
 .post-image img {
     width: 100%;
-    height:auto;
+    height: auto;
 }
-.post-desc{
-  height:300px;
-  overflow:hidden;
+.post-desc {
+    height: 200px;
+    overflow: hidden;
 }
-.profile-info{
-  width: 20em;
-  height: 1000px;
+.profile-info {
+    width: 20em;
+    min-height: 1000px;
 }
-.right-side-items{
-  width: 20em;
-  height: 1000px;
+.left-side-items {
+    width: 70px;
 }
-#bio{
-  height:50px;
-  width:100%;
+.right-side-items {
+    width: 20px
 }
-#bioform{
-  width:100%;
+.page-wrap {
+    position: relative;
+}
+.sidebar {
+    position: fixed;
+    font-size: 25pt;
+}
+#bio {
+    height: 50px;
+    width: 100%;
+}
+#bioform {
+    width: 100%;
+}
+table tr td {
+    padding: 2px;
 }

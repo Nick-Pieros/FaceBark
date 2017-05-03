@@ -90,8 +90,6 @@ function LoginUser($username, $pass, $dbh)
 	}
 	return $curr_user;
 }
-
-
 function DeleteUser($dbh, $user_id, $admin)
 {
 	try {
@@ -421,6 +419,7 @@ function SendNotification($dbh, $user_list, $type, $link) {
 				}
 			}
 
+
 	}
 	catch (PDOException $e) {
 		$result = 0;
@@ -428,5 +427,4 @@ function SendNotification($dbh, $user_list, $type, $link) {
 	}
         return $result;
 }
-
 ?>

@@ -1,5 +1,11 @@
 
 <?php
+/*
+*   upload2.php -- does the actualy moving and uploading of files
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*   source: http://php.net/manual/en/features.file-upload.php
+*/
   // prepare the profile information
   require_once ("functions.php");
   require_once ("connect.php");
@@ -7,7 +13,7 @@
   $user_id = $_COOKIE['user_id'];
   $dirname = "uploads/";
 
-  // "borrowed" from http://php.net/manual/en/features.file-upload.php
+
   //header('Content-Type: text/plain; charset=utf-8');
 
   try {

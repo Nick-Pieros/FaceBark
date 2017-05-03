@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <?php
+/*
+*   registration.php -- front page of the website, allows users to register,
+*   log in, and request a password reset
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
 require_once ("user_functions.php");
 require_once ("connect.php");
 $dbh = ConnectDB();
+
+// resets logged in cookie
 setcookie ("user_id", "", 1);
 unset($_COOKIE['user_id']);
+
 ?>
 <html lang='en'>
    <head>
@@ -30,6 +40,14 @@ unset($_COOKIE['user_id']);
                    $('.date').text(today);
                 }
                 window.onload = getDate;
+
+                // prevents user from entering spaces as part of the username
+                function nospaces(t){
+                  if(t.value.match(/\s/g)){
+                    t.value=t.value.replace(/\s/g,'');
+                  }
+                }
+
       </script>
    </head>
    <body>
@@ -38,6 +56,7 @@ unset($_COOKIE['user_id']);
             <div class='date'></div>
             <div class='login'>
                <?php
+                  // signin.php contains the login/signin page
                   include 'signin.php';
                 ?>
             </div>
@@ -48,6 +67,7 @@ unset($_COOKIE['user_id']);
             <div class='logo'><img src='images/fbark-logo.png'/></div>
          </div>
       </div>
+      <!-- dog photos and signup div, such cute doggos, wow -->
       <div class='photo-signup'>
          <div class='photo-grid'>
                <div class='photo-grid-item first-item'>
@@ -69,25 +89,29 @@ unset($_COOKIE['user_id']);
          <div class='signup-forgotpass'>
             <div class='signup'>
                <?php
-
+               // error checking on registration
                $unameErr = $emailErr = $fnameErr = $lnameErr = $passwordErr = $confPasswordErr = "";
                $username  = $email = $f_name = $l_name = $password = "";
 
+               // if registration was requested via a POST, check the inputs
                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
                   if (empty($_POST["username"])) { // if field is empty
-                      $unameErr = "*Name is required";
+                      $unameErr = "*Name is required";// set the error to display
                   } else {
                       $username = test_input($_POST["username"]);
                   }
+
                   if (empty($_POST["email"])) {
                       $emailErr = "*Email is required";
                   } else {
-                    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) === false) {
+                    if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) === false) { //build in check to see if the email is in a valid format
                       $email = test_input($_POST["email"]);
                     } else {
                       $emailErr = '*Not a valid address';
                     }
                   }
+
                   if (empty($_POST["f_name"])) {
                       $fnameErr = "*First name is required";
                   } else {
@@ -99,7 +123,8 @@ unset($_COOKIE['user_id']);
                   } else {
                       $l_name = test_input($_POST["l_name"]);
                   }
-                  // need to perform security actions on password
+
+                  // password requirements check
                   if (empty($_POST["password"])) {
                       $passwordErr = "*Password is required";
                   } else {
@@ -115,23 +140,28 @@ unset($_COOKIE['user_id']);
                         } else{
                           $confPasswordErr = "*Passwords do not match!";
                         }
-                        // else send error message
                       }
                     }
                   }
+
+
                   if(($password != "") && ($username != "") && ($email != "") && ($f_name != "") && ($l_name != "")){
-                   // $password = password_hash($password, PASSWORD_DEFAULT);
+
                    $user_id = RegisterUser($username, $email, $password, $f_name, $l_name, $dbh);
                    setcookie("tmp_user_id", $user_id);
+                   // a user exists if an email or username provided by the registerer
+                   // exists in the database
                    if(!($user_id > 1)){
                      $userExistsErr = "<span class='error'> User already exists, please log in! </span>";
                    } else {
+                     // if all is good, forwards to a sends an email from verify-user.php
                      header("Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/verify-user.php");
                      die();
                    }
                  }
                }
 
+               // sanitized input
                function test_input($data) {
                  $data = trim($data);
                  $data = stripslashes($data);
@@ -139,9 +169,9 @@ unset($_COOKIE['user_id']);
                  return $data;
                }
                ?>
-               <h1>Sign up for free!</h1>
+               <h1>Sign up for free!</h1><!-- registration.php calls itself for regisering-->
                <form name='myForm' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>' method='post' >
-                  <input id='username' type='text' name='username' placeholder='Username' maxlength='30' value="<?php echo $_POST['username']?>"> <span class='error'><?php echo $unameErr?></span> <br/>
+                  <input id='username' type='text' name='username' placeholder='Username' maxlength='30' onkeyup="nospaces(this)" value="<?php echo $_POST['username']?>"> <span class='error'><?php echo $unameErr?></span> <br/>
                   <input id='email' type='text' name='email' placeholder='Email' maxlength='256' value="<?php echo $_POST['email']?>"> <span class='error'><?php echo $emailErr?></span><br/>
                   <input id='f_name' type='text' name='f_name' placeholder='First Name' maxlength='35' value="<?php echo $_POST['f_name']?>"> <span class='error'><?php echo $fnameErr?></span><br/>
                   <input id='l_name' type='text' name='l_name' placeholder='Last Name' maxlength='35'value="<?php echo $_POST['l_name']?>"> <span class='error'><?php echo $lnameErr?></span><br/>
@@ -151,6 +181,7 @@ unset($_COOKIE['user_id']);
                </form>
                <?php echo $userExistsErr; ?>
             </div>
+            <!-- password reset section-->
             <div class='forgotpass'>
                <h1>Forgot password?</h1>
                <form action='reset-pass-request.php' method='get'>

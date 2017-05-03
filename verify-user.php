@@ -1,4 +1,11 @@
 <?php
+/*
+*   verify-user.php -- php that attempts to send out email verification
+*   emails, and returns different messages depending on the success, or
+*   reason of failure
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
 require_once ("user_functions.php");
 require_once ("connect.php");
 $dbh=ConnectDB();
@@ -13,7 +20,7 @@ if($valNum == -404){
        "to appear in your inbox. If this is your first attempt to ".
        "log in, please verify your email address through the ".
        "link that was emailed to you. Thank you.";
-       
+
 } else if($valNum == -1){
   echo "Too many attempts to access this account have been made within ".
        "a short time frame. This account has been restricted.";

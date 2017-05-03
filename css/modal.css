@@ -1,3 +1,10 @@
+/*
+*   modal.css -- CSS for modal
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*   source:https://www.w3schools.com/howto/howto_css_modals.asp
+*/
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */

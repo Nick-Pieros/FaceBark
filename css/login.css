@@ -1,3 +1,9 @@
+/*
+*   login.css -- CSS for signin.php
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
 * {
     margin: 0;
     padding: 0;
@@ -7,26 +13,25 @@ body {
     background-color: #D6E9FE;
 }
 .green-btn {
-  border-radius: 17px;
-  box-shadow: 0px 1px 3px #666666;
-  font-family: Courier New;
-  color: #000000;
-  border: solid #1f8c38 1px;
-  text-decoration: none;
+    border-radius: 17px;
+    box-shadow: 0px 1px 3px #666666;
+    font-family: Courier New;
+    color: #000000;
+    border: solid #1f8c38 1px;
+    text-decoration: none;
 }
-
 .green-btn:hover {
-  background: #4ca183;
-  background-image: -webkit-linear-gradient(top, #4ca184, #419b6d);
-  background-image: -moz-linear-gradient(top, #4ca184, #419b6d);
-  background-image: -ms-linear-gradient(top, #4ca184, #419b6d);
-  background-image: -o-linear-gradient(top, #4ca184, #419b6d);
-  background-image: linear-gradient(to bottom, #4ca184, #419b6d);
-  text-decoration: none;
+    background: #4ca183;
+    background-image: -webkit-linear-gradient(top, #4ca184, #419b6d);
+    background-image: -moz-linear-gradient(top, #4ca184, #419b6d);
+    background-image: -ms-linear-gradient(top, #4ca184, #419b6d);
+    background-image: -o-linear-gradient(top, #4ca184, #419b6d);
+    background-image: linear-gradient(to bottom, #4ca184, #419b6d);
+    text-decoration: none;
 }
-.error{
-    color:red;
-    font-size: 10pt;
+.error {
+    color: red;
+    font-size: 15pt;
 }
 .menu-container {
     color: #fff;
@@ -81,7 +86,6 @@ body {
 .forgotpass {
     display: flex;
     flex-direction: column;
-    /*align-items: center;*/
 }
 .forgotpass {
     margin-top: 20%;
@@ -91,8 +95,6 @@ body {
     font-size: 20pt;
     display: flex;
     flex-direction: column;
-    /*align-items: center;*/
-    /*background-image: url('../images/wood.jpg');*/
     background-size: 50%;
     padding: 5%;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;

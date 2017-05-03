@@ -1,85 +1,87 @@
+/*
+*   header.css -- CSS for headers
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-
 body {
-  /*min-height: 1200px;*/
-  font-size: 18px;
-  font-family: sans-serif;
-  color: #5D6063;
+    font-size: 18px;
+    font-family: sans-serif;
+    color: #5D6063;
+    background-color: #7BB0EC;
 }
-
 a:link,
 a:visited {
-  color: #5D6063;
-  text-decoration: none;
+    color: #5D6063;
+    text-decoration: none;
 }
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
-.logo img{
-  height:60px;
-  weight:auto;
+.logo img {
+    height: 60px;
+    weight: auto;
 }
 .header {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px 50px 10px 50px;
-  background-image: linear-gradient( #4ea288, #3b9860 50%);
-  color:white;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 50px 10px 50px;
+    background-image: linear-gradient( #4ea288, #3b9860 50%);
+    color: white;
 }
-.header a{
-  color:white;
+.header a {
+    color: white;
 }
 .menu {
-  margin-top: 15px;
+    margin-top: 15px;
 }
-
 .menu > li {
-  display: inline;
-  margin-right: 50px;
+    display: inline;
+    margin-right: 50px;
 }
-
 .menu > li:last-of-type {
-  margin-right: 0;
+    margin-right: 0;
 }
 .features-menu {
-  display: flex;
-  flex-direction: column;
-  background: #8bc7a0;
-  border-radius: 5px;
-  padding-top: 60px;
-  position: absolute;
-  top: -25px;
-  left: -30px;
-  display:none;
+    display: flex;
+    flex-direction: column;
+    background: #8bc7a0;
+    border-radius: 5px;
+    padding-top: 60px;
+    position: absolute;
+    top: -25px;
+    left: -30px;
+    display: none;
 }
-
 .features-menu li {
-  list-style: none;
-  border-bottom: 1px solid #FFF;
-  padding: 0 40px 10px 20px;
-  margin: 10px;
+    list-style: none;
+    border-bottom: 1px solid #FFF;
+    padding: 0 40px 10px 20px;
+    margin: 10px;
 }
-
 .features-menu li:last-of-type {
-  border-bottom: none;
+    border-bottom: none;
 }
 .dropdown {
-  position: relative;
+    position: relative;
 }
 .dropdown > span {
-  z-index: 2;
-  position: relative;
-  cursor: pointer;
+    z-index: 2;
+    position: relative;
+    cursor: pointer;
 }
-
 .dropdown:hover .features-menu {
-  display: flex;
-  flex-direction: column;
-  background: #B2D6FF;
-  z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background: #B2D6FF;
+    z-index: 1;
+}
+.center{
+  text-align: center;
 }

@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <?php
+/*
+*   post.php -- single detailed page view of a post; consists of title, comments,
+*   photo upload, captions, and popularity
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
+
   require_once ("functions.php");
   require_once ("connect.php");
   $dbh=ConnectDB();
+
   $post_id = $_GET['post_id'];
-  $isAdmin = 0;
-  $isAdmin = IsAdminUser($dbh, $_COOKIE['user_id']);
-  $op = 'false';
-  $postinfo=GetPost($post_id, $dbh);
+
+  // a moderator is the original poster or an admin
+  // moderators have the power to delete a
+  // or remove a comment
+  $isModerator = 0;
+  $isModerator = IsAdminUser($dbh, $_COOKIE['user_id']);
+
+  $postinfo = GetPost($post_id, $dbh);
   $signedInUser = GetUserInfo($_COOKIE['user_id'],$dbh);
-  //print_r($postinfo);
+
+  // if a post isn't found, redirect it to the 404 page
   if($postinfo==0 ){
     header( 'Location: http://elvis.rowan.edu/~blackc6/awp/FaceBark/page-not-found.php');
     die();
   }
-
+  // if the signed in user is the same user who made the post_id
+  // they are considered a moderator
   if($signedInUser[0]->username == $postinfo[0]->username){
-    $op = 'true';
+    $isModerator = 1;
   }
  ?>
 
@@ -27,23 +42,7 @@
     <link href='css/header.css' rel='stylesheet' />
     <link href='css/post.css' rel='stylesheet' />
     <link href='images/doggo1.jpg' rel='icon' />
-    <style>
-      .comment-form{
-        display:flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      #comment-submit {
-       border-radius: 2px;
-       box-shadow:  0px 2px 11px 0px rgba(0, 0, 0, 0.3);
-       border: 1px solid #e2e6e6;
-       margin: 10px 0 10px 0;
-       font-family: 'Open Sans', sans-serif;
-       outline: none;
-       width: 395px;
-       height: 100px;
-      }
-    </style>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
 
@@ -51,19 +50,21 @@
     var comment_id;
     var post_id = <?php echo $post_id?>;
     var new_comment_count = 0;
-    function myfunct(){
+
+    function submitComment(){
       var comment = $.trim($('#comment-submit').val());
 
       //to sanitize input
       //https://css-tricks.com/snippets/javascript/strip-html-tags-in-javascript/
       comment = comment.replace(/(<([^>]+)>)/ig,"");
-      comment = hrefComment();
+      comment = hrefComment(comment);
+
       //perform php function which should return id
       if (comment == ''){
         alert('Empty comments cannot be submitted.');
         $('#comment-submit').val('');
       }
-      else {
+      else { //creates the comment that is to be displayed by redrawing
         $('.comments-list').append(
           "<div class='comment'>"+
              "<div class='comment-info'>" +
@@ -82,6 +83,8 @@
               "</div>"+
           "</div>"
         );
+
+        // ajax call to the comment submit function that creates the post
         $('#comment-submit').val('');
         $.ajax({
             url: 'create-comment.php',
@@ -99,73 +102,84 @@
 
     };
 
+    // creates the anchors for @mentions and #tags
     function hrefComment(comment){
-      commentSplit = comment.split(" ");
-      for(var i in commentSplit){
+      var commentSplit = comment.split(" ");
+      var newComment = [];
+
+      commentSplit.forEach(function(i){
         if(i.indexOf("@") == 0){
-          
-        }
+          i = "<a href='user.php?username=" + i.substring(1) + "'>" + i + "</a>";
+        };
+        if(i.indexOf("#") == 0){
+          i = "<a href='search.php?method=Tags&searchTerm=" + i.substring(1) + "'>" + i + "</a>";
+        };
+        newComment.push(i);
       }
+      );
+      comment = newComment.join(" ");
       return comment;
     }
+
+    // disallows newlines
+    function noNewLines(t){
+      if(t.value.match(/\n/)){
+        t.value=t.value.replace(/\n/g,' ');
+      }
+    }
+
+
     </script>
 </head>
 
 <body>
     <?php include 'header.php'; ?>
     <?php
-    $comments = GetAllComments($dbh, $post_id);
-         ?>
+      // retrieve all comments
+      $comments = GetAllComments($dbh, $post_id);
+      ?>
     <div class='content'>
-
         <div class='post'>
             <div class='post-left'>
                 <div class='post-header'>
                     <h2 class='post-title'>
-              <!-- this content will change using php -->
-              <?php echo ($postinfo[0]->post_title);?>
-              <?php  if($signedInUser[0]->username == $postinfo[0]->username || $isAdmin === 1): ?>
-                <a href="delete-post.php?post_id=<?php echo $post_id?>"><button>Delete post</button></a>
-              <?php endif ?>
-           </h2>
+                      <?php echo ($postinfo[0]->post_title);?>
+
+                      <!-- if the you are a moderator you will see the buttons to allow the deleting of posts and comments  -->
+                      <?php  if( $isModerator=== 1): ?>
+                        <a href="delete-post.php?post_id=<?php echo $post_id?>"><button>Delete post</button></a>
+                      <?php endif ?>
+                    </h2>
                     <h4 class='post-poster'>
-              <!-- this content will change using php -->
-              by <a href='./user.php?username=<?php echo ($postinfo[0]->username) ?>'><?php echo ($postinfo[0]->username) ?> </a> on <?php echo $postinfo[0]->post_timestamp?>
-           </h4>
+                      by <a href='./user.php?username=<?php echo ($postinfo[0]->username) ?>'><?php echo ($postinfo[0]->username) ?> </a> on <?php echo $postinfo[0]->post_timestamp?>
+                    </h4>
                 </div>
                 <div class='post-image'>
-                    <!-- this content will change using php -->
                     <a href='post.php?post_id=<?php echo ($postinfo[0]->post_id) ?>'><img src='<?php echo ($postinfo[0]->file_path) ?>'></img></a>
                 </div>
             </div>
             <div class='post-right'>
                 <div class='post-desc'>
-                    <p>
-                        <!-- this content will change using php -->
-                        <?php echo ($postinfo[0]->post_text) ?>
-                    </p>
+                    <p><?php echo ($postinfo[0]->post_text) ?></p>
                 </div>
-                <div class='post-voting'>
+                  <div class='post-voting'>
                     <div class='post-upvote'>
                         <a href='vote.php?vote=1&post_id=<?php echo $post_id?>'><img src='images/like-paw.png'></img></a>
                     </div>
                     <div class='post-downvote'>
                         <a href='vote.php?vote=-1&post_id=<?php echo $post_id?>'><img src='images/dislike-paw.png'></img></a>
                     </div>
-              </div>
+                  </div>
               <div>
-              <h4>
-                Popularity: <?php echo $postinfo[0]->post_votes;?>
-              </h4>
-          </div>
+              <h4>Popularity: <?php echo $postinfo[0]->post_votes;?></h4>
+              </div>
             </div>
         </div>
-
+        <!-- list of comments for this post -->
         <div class='comments-container'>
           <div class='comment-form'>
-              <textarea id='comment-submit' type='text' name='new_comment' form='commentform' placeholder='Write a comment (max 255 chars)' maxlength='255'></textarea><br/>
-
-              <button type='button' onclick="myfunct()">Submit comment!</button>
+              <textarea id='comment-submit' type='text' name='new_comment' onkeyup="noNewLines(this)"  form='commentform' placeholder='Write a comment (max 255 chars)' maxlength='255'></textarea><br/>
+              <button type='button' onclick="submitComment()">Submit comment!</button>
           </div>
             <div class='first-comments-list comments-list '>
               <?php foreach( $comments as &$comment): ?>
@@ -173,19 +187,16 @@
                     <div class='comment-info'>
                         <div class='comment-tagline'>
                             <div class='comment-poster'>
-                                <!-- this content will change using php -->
                                 <a href='user.php?username=<?php echo $comment->username;?>'><?php echo $comment->username?></a>
                             </div>
                             <div class='comment-time'>
-                                <!-- this content will change using php -->
                                 <?php echo $comment->comment_timestamp;
-                                if($signedInUser[0]->username == $comment->username  || $isAdmin == 1): ?>
+                                if($signedInUser[0]->username == $comment->username  || $isModerator== 1): ?>
                                 <a href='delete-comment.php?comment_id=<?php echo $comment->comment_id?>&post_id=<?php echo $post_id?>'><button>Delete comment</button></a>
                               <?php endif ?>
                             </div>
                         </div>
                         <div class='comment-body'>
-                            <!-- this content will change using php -->
                             <?php echo $comment->comment_text ?>
                         </div>
                     </div>

@@ -1,0 +1,20 @@
+/*
+*   search.css -- CSS for search.php
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+
+.user-table tr td{
+  padding:5px;
+  font-size:20pt;
+  text-align: center;
+}
+table a:link, table a:visited{
+  color:blue;
+}
+.content{
+
+}
+.results{
+  text-align: center;
+}

@@ -1,3 +1,11 @@
+<?php
+/*
+*   header.php -- provides php pages with navigation and search; to be #included
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+*/
+?>
+
 <div class='header'>
     <div class='logo'><a href='gallery.php?page=1'><img src='images/fbark-logo.png' /></a></div>
     <div class='search-form'>
@@ -16,11 +24,11 @@
                 </li>
                 <li><a href='profile.php'>Profile</a>
                 </li>
-                <li><a href='registration.php'>Sign out</a>
+                <li><a href='registration.php'>Sign Out</a>
                 </li>
             </ul>
         </li>
-        <li><a href='ui-create-post.php'>Make a post!</a>
+        <li><a href='ui-create-post.php'>Make a post</a>
         </li>
     </ul>
 </div>

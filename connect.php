@@ -1,7 +1,8 @@
 <?php
 /* connect.php -- connect to MySQL and select webuser database
  *
- * Darren Provine, 8 March 2011
+ *  Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
+ *  source: Darren Provine
  */
 
 // ConnectDB() - takes no arguments, returns database handle

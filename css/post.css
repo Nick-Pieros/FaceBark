@@ -1,23 +1,22 @@
 /*
-css for post-page.html
-Clifford Black
-David Carlin
-Nicholas Pieros
+*   post.css -- CSS for pages containing posts
+*
+*   Clifford Black, David Carlin, Nicholas Pieros - 5/3/2017
 */
+
 .content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #7BB0EC;
     width: 100%;
-    height:100%;
+    height: 100%;
 }
 .post {
     margin-top: 50px;
     background-color: #D6E9FE;
     width: 40%;
     word-wrap: break-word;
-    border:2px solid black;
+    border: 2px solid black;
 }
 .post-header {
     padding: 5px;
@@ -32,7 +31,7 @@ Nicholas Pieros
 }
 .post-image {
     min-width: 100%;
-    display:flex;
+    display: flex;
     justify-content: center;
 }
 .post-image img {
@@ -102,7 +101,6 @@ Nicholas Pieros
     border-left: none;
 }
 .comment {
-    /* comment + comment list */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -110,7 +108,6 @@ Nicholas Pieros
     padding-top: 20px;
 }
 .comment-info {
-    /* single comment on the comment list */
     width: 100%;
 }
 .comment-tagline {
@@ -129,4 +126,19 @@ Nicholas Pieros
     width: 100%;
     font-size: 15pt;
     overflow: hidden;
+}
+.comment-form{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+#comment-submit {
+ border-radius: 2px;
+ box-shadow:  0px 2px 11px 0px rgba(0, 0, 0, 0.3);
+ border: 1px solid #e2e6e6;
+ margin: 10px 0 10px 0;
+ font-family: 'Open Sans', sans-serif;
+ outline: none;
+ width: 395px;
+ height: 100px;
 }
